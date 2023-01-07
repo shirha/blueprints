@@ -224,7 +224,7 @@ function changeDb(cat){
   }
   document.getElementById(cat).style.display = 'block';
   if(cat == "Localstore"){
-    doc = document.querySelectorAll(".m");
+    doc = document.querySelectorAll(".m"); // menu buttons
     for (var i=0, len=doc.length; i<len; i++) {
       doc[i].style.display = 'none';
     }
@@ -299,7 +299,7 @@ function displayCp(){
             [key, value] = e.split(/,/);
             if(key != "^"){
               if(!(key in cp)){
-                max += 2.6;
+                max += 40/18; // 2.22; //2.6;
                 cp[key] = Object.create(null);
                 cp[key].num = 0;
                 cp[key].grp = [];
@@ -328,7 +328,7 @@ function displayCp(){
     element.setAttribute("class", "b c");
     createSpan(element, "r", "=", `${prop},${cp[prop].num} @${price[prop]}`);
     cost += cp[prop].num * price[prop];
-    cnt += 2.6;
+    cnt += 40/18; // 2.22; // 2.6;
     cp[prop].grp.forEach((text, i) =>{
       createSpan(element, "i", status, text);
       if(status == "="){
@@ -2628,6 +2628,17 @@ polestar = {"Freighter":{"(R)Atmospheric Control Unit":[1,"Chromatic Metal,60","
       <span class="i">x10 Base Teleport Module,2</span></button>
 
      Owned recipes = [carbon nanotube,c 50],[di-jelly,h 40],[metal plating,fe 50],[hermetic seal,c+ 30],[ch,cu 2] etc
+*/
+/* NOTE:
+      Form + 0 lines of detail = 40 + 18*0 px
+      Form + 1 lines of detail = 40 + 18*1 px 
+      Form + 2 lines of detail = 40 + 18*2 px
+      etc.
+      (no_of_forms * 40 + no_of_lines * 18) / 2 is the split amount
+      so, how many px's are in the block that causes the split?
+      How do you split a list of numbers that represent lengths?
+      40 / 18 = 2.222
+      toggle =≠ needs to re-calculate max; displayCP(), toggleMenu(), Object.keys(cp).sort().forEach((prop)
 */
 </script>
 </body>
