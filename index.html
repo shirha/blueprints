@@ -2595,18 +2595,19 @@ Agriculture
     NipNip Buds,1
     Faecium,20`
 .split(/\n/).forEach((e) => {
-  if(e){
+  if(e && !e.match(/^\s*$/)){
     if(e.match(/^\S/)){
       cat = e;
       addCombo(e); // external dependency along w/ db, cat, key, value
     }else if(e.match(/^ {4}/)){
-      db[cat][key].push(e.substr(4));
+      db[cat][key].push(e.trim());
     }else{
-      [key, value] = e.substr(2).split(/,/);
+      // [key, value] = e.substr(2).split(/,/); // strip any comma delimited numbers of the end
+      key = e.trim()
       if(!(cat in db)){
         db[cat] = Object.create(null);
       }
-      db[cat][key] = [0];
+      db[cat][key] = [0]; // set 1st entry in array as a counter
     }
   }
 //}, {key:0, value:0, cat:0}); doesn't work this way!
