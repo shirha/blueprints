@@ -90,6 +90,7 @@
 <table id="Components"><tr><td class="col"></td><td class="col"></td></tr></table>
 </div>
 <button id="clr">Click to clear “localStorage”</button>
+<div id="info" style="display:block;font-size:12px;font-weight:bold;color:black;background-color:white;width:30px;margin-top:10px;padding-left:5px;"></div>
 <script>
 let cp, rpt, 
   db      = Object.create(null), 
@@ -133,6 +134,8 @@ document.querySelector('#combo [value="CrashedShip"]').selected = true;
 changeDb("CrashedShip");
 console.log(price);
 console.log(db);
+document.getElementById("info").innerHTML = screen.width;
+
 
 /* create a default 'All Ones' in localstorage[slot8] */
 if(localStorage.getItem("slot8") === null) {
