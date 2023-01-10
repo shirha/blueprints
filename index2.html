@@ -51,13 +51,13 @@
       .d, .u, .m, select, option, input, #anal {font-size: 18px; font-weight: 600; margin-right: 3px; height: 50px;}
       .m:not(#times) {width: 32px;}
     }
+*/
     @media (max-device-width:400px) { * {
       font-size:  10px; font-family: Arial;} 
       .d, .u, .m, select, option, input, #anal {font-size: 18px; font-weight: 600; margin-right: 3px; height: 50px;}
-      .m:not(#times) {width: 32px;}
+      .m:not(#times) {width: 30px;}
     }
-*/
-    @media (max-device-width:400px) { * {
+    @media (max-device-width:360px) { * {
       font-size:   9px; font-family: Arial;} 
       .d, .u, .m, select, option, input, #anal {font-size: 16px; font-weight: 600; margin-right: 3px; height: 50px;}
       .m:not(#times) {width: 24px;}
@@ -90,7 +90,7 @@
 <table id="Components"><tr><td class="col"></td><td class="col"></td></tr></table>
 </div>
 <button id="clr">Click to clear “localStorage”</button>
-<div id="info" style="display:block;font-size:12px;font-weight:bold;color:black;background-color:white;width:30px;margin-top:10px;padding-left:5px;"></div>
+<div id="info" style="display:block;font-size:12px;font-weight:bold;color:black;width:30px;margin-top:10px;padding-left:5px;"></div>
 <script>
 let cp, rpt, 
   db      = Object.create(null), 
