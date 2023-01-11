@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!--meta name="viewport" content="width=device-width, initial-scale=1.0"-->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="mobile-web-app-capable" content="yes">
   <link rel="manifest" href="manifest.json">
   <link rel="shortcut icon" type="image/png" href="favicon-512.png">
@@ -10,7 +11,7 @@
   <style>
     body {background: #31b2a0 url("nms3.jpg") no-repeat fixed;}
     #container {max-width: 703px;}
-    table {border: 0; border-collapse: collapse;}
+    table {border:  0; border-collapse: collapse;}
     td {width: 50%; vertical-align: text-top;}
     #Localstore td {width: 100%}
     span {display: block}
@@ -25,6 +26,7 @@
     .b {padding: 5px; text-align: left; width: 97%;}
     .r {font-weight: 600;}
     .i {padding-left: 10px;}
+
     .b:active, .m:active {background: rgba(220, 220, 220, 0.75);}
     .u {background: rgba(240, 240, 240, 0.75) url("cloud_bw_up.png") no-repeat center;}
     .d {background: rgba(240, 240, 240, 0.75) url("cloud_bw_down.png") no-repeat center;}
@@ -33,34 +35,17 @@
     .c, .c:active {background: rgba(255, 255, 255, 0.75);}
     #msg {margin:10px; font-weight: 600; padding: 5px; display: inline-block;} /* so td.width != 100% */
     #egg {font-weight: 400; margin-left: 10px; font-style: italic; display: inline-block;}
-    #clr {
-      position: fixed; bottom:0%; margin-bottom: 10px; padding: 5px; color: white;
-      border-radius: 8px; border: 1px solid #e0e0e0; background: rgba(240, 0, 0, 0.75); 
-    }
-    #clr:active {background: rgba(200, 0, 0, 0.75);}
 
                                       * {font-size:  16px; font-family: Arial;}
-    @media (max-device-width:480px) { * {
-      font-size:  12px; font-family: Arial;}
-      .d, .u, .m, select, option, input, #anal {font-size: 18px; font-weight: 600; margin-right: 3px; height: 50px;}
-      .m:not(#times) {width: 36px;}
-    }
-    @media (max-device-width:420px) { * {
-      font-size:  10px; font-family: Arial;} 
-      .d, .u, .m, select, option, input, #anal {font-size: 18px; font-weight: 600; margin-right: 3px; height: 50px;}
-      .m:not(#times) {width: 32px;}
-    }
-    @media (max-device-width:360px) { * {
-      font-size:   9px; font-family: Arial;} 
-      .d, .u, .m, select, option, input, #anal {font-size: 16px; font-weight: 600; margin-right: 3px; height: 50px;}
-      .m:not(#times) {width: 24px;}
-    }
+    @media (max-device-width:480px) { * {font-size:  12px; font-family: Arial;} }
+    @media (max-device-width:420px) { * {font-size:  10px; font-family: Arial;} }
+    @media (max-device-width:380px) { * {font-size:   9px; font-family: Arial;} }
   </style>
 </head>
 <body><div id="container">
 <div>
 <select name="combo" id="combo"></select>
-<button type="button" class="m" id="menu" >=</button> <!-- ≠ -->
+<button type="button" class="m" id="menu" >=</button>
 <button type="button" class="m" id="plus" >+</button>
 <button type="button" class="m" id="times">10<sup id="power">0</sup></button>
 <button type="button" class="m" id="ones" >1</button>
@@ -82,22 +67,17 @@
 </table>
 <table id="Components"><tr><td class="col"></td><td class="col"></td></tr></table>
 </div>
-<button id="clr">Click to clear “localStorage”</button>
-<div id="info" style="display:block;font-size:10px;width:30px;margin-top:10px;padding-left:5px;"></div>
 <script>
-let cp, rpt, 
+let cp, rpt,
   db      = Object.create(null), 
   price   = Object.create(null), 
   polestar = Object.create(null), 
   include = Object.create(null), // used in displayCp() to exclude some categories
   combo   = document.getElementById("combo"),
   anal    = document.getElementById("anal");
-combo.addEventListener("change", () => {
-  changeDb(combo.value)
-});
+combo.addEventListener("change", () => {changeDb(combo.value)});
 anal.addEventListener("click", () => {
   document.getElementById("anal").style.display = "none";
-  document.getElementById("clr" ).style.display = "none";
   let doc = document.querySelectorAll(`#Components .col`),
     status = document.getElementById("menu").innerHTML;
   doc[0].innerHTML = "";
@@ -105,33 +85,24 @@ anal.addEventListener("click", () => {
   analyse("Stasis Device",status,doc[0]);
   analyse("Fusion Ignitor",status,doc[1]);
 });
-document.getElementById("clr"  ).addEventListener("click", () => {
-  let doc = document.querySelectorAll('input[id^=slot]');
-  for (let i = 0; i < doc.length; i++) {
-    localStorage.removeItem(`slot${i}`);
-    document.getElementById(`slot${i}`).value = "";
-  }
-  document.getElementById("clr").style.display = "none";
-});
 document.getElementById("menu" ).addEventListener("click", toggle_menu);
 document.getElementById("plus" ).addEventListener("click", toggle_plus);
 document.getElementById("times").addEventListener("click", toggle_times);
 document.getElementById("ones" ).addEventListener("click", toggle_ones);
 document.getElementById("zero" ).addEventListener("click", toggle_zero);
 document.getElementById("onoff").addEventListener("click", toggle_onoff);
+
 addCombo("Components");
 init();
 addCombo("Localstore");
 displayDb();
-document.querySelector('#combo [value="CrashedShip"]').selected = true;
 changeDb("CrashedShip");
+document.querySelector('#combo [value="CrashedShip"]').selected = true;
 console.log(price);
 console.log(db);
-document.getElementById("info").innerHTML = screen.width;
-
 
 /* create a default 'All Ones' in localstorage[slot8] */
-if(localStorage.getItem("slot8") === null) {
+if (localStorage.getItem("slot8") === null) {
   let ones = JSON.parse(JSON.stringify(db));
   for(const cat in db){
     for(const prop in db[cat]){
@@ -139,18 +110,17 @@ if(localStorage.getItem("slot8") === null) {
   } }
   localStorage.setItem('slot8', JSON.stringify(['All Ones', ones]));
 }
-//--------------------------------------------
-if(localStorage.getItem("slot7") === null) {
+if (localStorage.getItem("slot7") === null) {
   localStorage.setItem('slot7', JSON.stringify(['Polestar', polestar]));
   db = polestar;
   displayDb();
-  document.querySelector('#combo [value="Components"]').selected = true;
   changeDb("Components");
-} else if(localStorage.getItem("slot7") === "Polestar") {
+  // document.querySelector('#combo [value="CrashedShip"]').selected = false;
+  document.querySelector('#combo [value="Components"]').selected = true;
+} else if (localStorage.getItem("slot7") === "Polestar") {
   localStorage.setItem('slot7', JSON.stringify(['Polestar', polestar]));
   polestar = null;
 }
-//-------------------------------------------- remove 'polestar' at bottom
 /* add event listeners for Localstore buttons */
 let btn = document.querySelectorAll("#Localstore button");
 for (let i = 0; i < btn.length; i++) {
@@ -160,9 +130,9 @@ for (let i = 0; i < btn.length; i++) {
 /* populate localstore input fields with descriptions */
 btn = document.querySelectorAll("#Localstore .d");
 for (let i = 0; i < btn.length; i++) {
-  let slot = localStorage.getItem(`slot${i}`), desc = '';
+  let slot = window.localStorage.getItem(`slot${i}`), desc = "", data;
   if(slot){
-    [desc] = JSON.parse(slot);
+    [desc, data] = JSON.parse(slot);
   }
   document.getElementById(`slot${i}`).value = desc;
 }
@@ -184,17 +154,16 @@ function localstore(e){
       }
     }
   }else{
-    let data = localStorage.getItem(key);
+    let desc, data = localStorage.getItem(key);
     if(data){
       [desc, data] = JSON.parse(data);
-      // text.value = desc;
+      text.value = desc;
       hilite(key);
       db = data;
       displayDb();
     }
   }
 }
-
 /* hilite recently accessed localstore slot */
 function hilite(slot){
   let inp = document.querySelectorAll("#Localstore input");
@@ -202,7 +171,6 @@ function hilite(slot){
       inp[i].style.backgroundColor = inp[i].id == slot ? "rgba(220, 220, 220, 0.9)" : "rgba(240, 240, 240, 0.75)";
   }
 }
-
 /* set increment amount to 1, 10, 100, 1000 */
 function toggle_times(){
   let text = document.getElementById("power");
@@ -212,13 +180,16 @@ function toggle_times(){
 function toggle_menu(){
   let text = document.getElementById("menu"), attr;
   [text.innerHTML, attr] = text.innerHTML == "=" ? ["≠", "none"] : ["=", "block"];
+  setDisplay(attr);
+  //if(document.getElementById("combo").value == "Components" && text.innerHTML == "≠") displayCp();
+}
+function setDisplay(attr) {
+  console.log(attr);
   let elements = document.getElementsByClassName('i');
-  for (let i = 0; i < elements.length; i++) {
+  for (var i = 0; i < elements.length; i++) {
     elements[i].style.display = attr;
   }
-  flow();
 }
-
 /* toggle whether to add or subtract increment amount */
 function toggle_plus(){
   let text = document.getElementById("plus");
@@ -248,25 +219,26 @@ function toggle_onoff(){
 }
 /* change category to display */
 function changeDb(cat){
-  console.log(`cat=${cat}`);
   let doc = document.querySelectorAll("table");
-  for (let i = 0; i < doc.length; i++) {
+  for (var i=0, len=doc.length; i<len; i++) {
     doc[i].style.display = 'none';
   }
-  document.getElementById("clr").style.display = "none";
   document.getElementById(cat).style.display = 'block';
-  doc = document.querySelectorAll(".m"); // menu buttons
-  for (let i = 0; i < doc.length; i++) {
-    doc[i].style.display = 'none';
-  }
-
-  if(cat == "Components"){
+  if(cat == "Localstore"){
+    doc = document.querySelectorAll(".m"); // menu buttons
+    for (var i=0, len=doc.length; i<len; i++) {
+      doc[i].style.display = 'none';
+    }
+  }else if(cat == "Components"){
     document.getElementById("menu" ).style.display = "inline-block";
- // let memCache = [], memValid = false;
- // if(!memValid)
-      displayCp(); // memValid = true; accum() & anal() -> memValid = false;
-    flow();
-  }else if(cat != "Localstore"){
+    document.getElementById("plus" ).style.display = "none";
+    document.getElementById("times").style.display = "none";
+    document.getElementById("ones" ).style.display = "none";
+    document.getElementById("zero" ).style.display = "none";
+    document.getElementById("onoff").style.display = "none";
+    document.getElementById("anal" ).style.display = "none";
+    displayCp();
+  }else{
     document.getElementById("menu" ).style.display = "inline-block";
     document.getElementById("plus" ).style.display = "inline-block";
     document.getElementById("times").style.display = "inline-block";
@@ -274,97 +246,20 @@ function changeDb(cat){
     document.getElementById("zero" ).style.display = "inline-block";
     document.getElementById("onoff").style.display = "inline-block";
     document.getElementById("onoff").innerHTML = include[cat];
-    flow();
+    document.getElementById("anal" ).style.display = "none";
   }
 }
-
-/* evenly balance the buttons in the two .col divs */
-function flow(){
-  let cat = combo.options[combo.selectedIndex].text,
-      status = document.getElementById("menu").innerHTML,
-      tbl = document.getElementById(cat),
-      doc = tbl.querySelectorAll(".col"),
-      arrR = JSON.parse(tbl.dataset.col),
-      arrL = arrR.splice(0,doc[0].children.length);
-      let direction = delta(arrL,arrR,status);
-  while( direction ){
-    if(direction > 0){
-      doc[0].appendChild(doc[1].firstChild);
-      arrL.push(arrR.shift());
-    }else{
-      doc[1].prepend(doc[0].lastChild);
-      arrR.unshift(arrL.pop());
-    }
-    direction = delta(arrL,arrR,status);
-  }
-}
-
-function delta(aL, aR, status){
-  let pad  = (n) => `${n.toFixed(2)}`.padStart(6, ' '),
-    factor = (n, status) => 40/18 + (status == "=" ? n : 0),    
-    sumL   = aL.reduce((a, b) => a + factor(b, status), 0),
-    sumR   = aR.reduce((a, b) => a + factor(b, status), 0),
-    delta1 = Math.abs(sumR - sumL),
-    delta0 = null,
-    delta2 = null;
-  if(aL.length > 0)
-    delta0 = Math.abs(sumR - sumL + 2 * (factor(aL[aL.length-1], status)));
-  if(aR.length > 0)
-    delta2 = Math.abs(sumR - sumL - 2 * (factor(aR[0], status)));
-  console.log(`${status},(${aL.length})[${aL}]=${pad(sumL)}, (${aR.length})[${aR}]=${pad(sumR)}, ` +
-    `d0=${aL.length > 0?pad(delta0):delta0}, d1=${pad(delta1)}, d2=${aR.length > 0?pad(delta2):delta2}`);
-  if(sumR == 0){
-    if(aL.length > 1){
-      return -1;
-    }else{
-      return 0;
-    }
-  }
-  if(sumL == 0){
-    if(aR.length > 1){
-      return +1;
-    }else{
-      return 0;
-    }
-  }
-  if(sumL + .001 > sumR){
-    if(delta1 > delta0 + .001) {
-      return -1;
-    }
-  }
-  if(sumR + .001 > sumL){
-    if(delta1 + .001 > delta2) {
-      return +1;
-    }
-  }
-  return 0;
-}
-/* delta2([],JSON.parse(document.getElementById("CrashedShip").dataset.col),'=') */
-function delta2(aL, aR, status){
-  function fact(n){return 40/18 + (status == "=" ? n : 0)}
-  function summ(array){return array.reduce((a, b) => a + fact(b, status), 0)}
-  let delta = [];    
-  while( true ){
-    delta.push(Math.abs(summ(aR) - summ(aL)));
-    aL.push(aR.shift());
-    if(!aR.length) break;
-  }
-  let minIndex = delta.reduce((before, value, index, array) => value < array[before] ? index : before, 0);
-  console.log(minIndex,delta);
-}
-
 /* populate all categories with blueprints */
 function displayDb(){
   let status = document.getElementById("menu").innerHTML, element;
   for(const cat in db){
-    let arrL = [], arrR = [];
     element = document.getElementById(cat);
     if(element) element.remove();
     let tbl = document.createElement("table");
     tbl.setAttribute("id", cat);
-    tbl.style.display = "none";
     tbl.innerHTML = `<tr><td class="col"></td><td class="col"></td></tr>`;
     document.getElementById("container").appendChild(tbl);
+    document.getElementById(cat).style.display = "none";
     let doc = document.querySelectorAll(`#${cat} .col`);
 
     for(const prop in db[cat]){
@@ -372,80 +267,88 @@ function displayDb(){
       element.setAttribute("id", prop);
       element.setAttribute("class", "b");
       createSpan(element, "r", "=", `${prop},${db[cat][prop][0]}`);
-      arrR.push(0);
       db[cat][prop].forEach((e, i) => {
-        if(i > 0){ // skip counter entry
+        if(i > 0){
           createSpan(element, "i", status, e);
-          arrR[arrR.length-1] += 1;
         }
       });
       doc[1].appendChild(element);
       //console.log(prop,element);
       document.getElementById(prop).addEventListener("click", accum);
     }
-    tbl.setAttribute("data-col", `[${arrR}]`);
-    console.log(cat, tbl.dataset.col);
+    while(doc[0].childNodes.length < doc[1].childNodes.length){
+      doc[0].appendChild(doc[1].removeChild(doc[1].firstChild));
+    }
   }
 }
 /* calculate component view */
 function displayCp(){
-  cp = Object.create(null);
+  cp = Object.create(null), rpt = ""; // global
   let doc = document.querySelectorAll(`#Components .col`),
     status = document.getElementById("menu").innerHTML,
-    cost = 0, num, element, key, value, arrL = [], arrR = [];
-
+    i = 0, max = 0, cnt = 0, cost = 0, num, element, key, value;
   doc[0].innerHTML = "";
   doc[1].innerHTML = "";
 
   for(const cat in db){
-   for(const prop in db[cat]){
+    for(const prop in db[cat]){
       db[cat][prop].forEach((e, i) => {
-        if(i == 0){ // save counter in num
+        if(i == 0){
           num = e;
         } else {
           if(num > 0 && include[cat] == "●"){
             [key, value] = e.split(/,/);
-            if(key != "^"){ // not a dependency
+            if(key != "^"){
               if(!(key in cp)){
+                max += 40/18; // 2.22; //2.6;
                 cp[key] = Object.create(null);
                 cp[key].num = 0;
                 cp[key].grp = [];
               }
+              if(status == "="){
+                max += 1;
+              }
+            //cp[key].num += num * value;
               cp[key].num += ( !prop.match(/^\(S\)/) && key.match(/^_/) ? 1 : num ) * value;
               cp[key].grp.push(`x${num} ${prop},${value}`);
-  } } } })} }
+            }
+            //console.log("prop=",prop,",key=",key,",value=",value,",num=",num);
+          }
+        }
+      })
+    }
+  }
   console.log(cp);
+  console.log('max=',max,'status=',status);
 
   Object.keys(cp).sort().forEach((prop) => {
+    if(cnt >= max / 2){
+      i = 1;
+    }
     element = document.createElement("button");
     element.setAttribute("class", "b c");
     createSpan(element, "r", "=", `${prop},${cp[prop].num} @${price[prop]}`);
     cost += cp[prop].num * price[prop];
-    arrR.push(0);
+    cnt += 40/18; // 2.22; // 2.6;
     cp[prop].grp.forEach((text, i) =>{
       createSpan(element, "i", status, text);
-      arrR[arrR.length-1] += 1;
+      if(status == "="){
+        cnt += 1;
+      }
     });
-    doc[0].appendChild(element);
+    doc[i].appendChild(element);
   });
-
   element = document.createElement("button");
   element.setAttribute("class", "b c");
   createSpan(element, "r", "=", `cost: ${cost} ${cost == 0 ? 
-    '<span id="egg">Click “@” to see easter egg</span>' : ""}`);
-  doc[0].appendChild(element);
-  arrR.push(0);
-
-  let tbl = document.getElementById("Components");
-  tbl.setAttribute("data-col", `[${arrR}]`);
-  console.log("Components", tbl.dataset.col);
+    '<span id="egg">- See easter egg with "@"</span>' : ""}`);
+  doc[i].appendChild(element);
+  console.log("cnt=",cnt);
 
   if(cost == 0){
     document.getElementById("anal").style.display = "inline-block";
-    document.getElementById("clr" ).style.display = "inline-block";
   }
 }
-/* analyze valuable blueprints */
 function analyse(recipe,status,doc){
   let ref = db.Valuables[recipe];
   for(let i = 1; i < ref.length; i++){
@@ -469,7 +372,7 @@ function createSpan(element, c, status, text){
   //console.log(c,status,text);
   let span = document.createElement("span");
   span.setAttribute("class", c);
-  span.style.display = status == "=" ? "block" : "none";
+  span.style.display = status == "=" ? "block" : "none";;
   span.innerHTML = text;
   element.appendChild(span);
 }
@@ -487,7 +390,7 @@ function accum(e){
       db[cat][element.id][0] = Math.max(db[cat][element.id][0] - 10 ** power, 0);
   }
   element.childNodes[0].innerHTML = `${element.id},${db[cat][element.id][0]}`;
-  // console.log(cat,element.id,db[cat][element.id]);
+  //console.log(cat,element.id,db[cat][element.id]);
 }
 
 /* used by init() to populate select options */
@@ -2695,51 +2598,49 @@ Agriculture
   if(e && !e.match(/^\s*$/)){
     if(e.match(/^\S/)){
       cat = e;
-      addCombo(e);
+      addCombo(e); // external dependency along w/ db, cat, key, value
     }else if(e.match(/^ {4}/)){
       db[cat][key].push(e.trim());
     }else{
+      // [key, value] = e.substr(2).split(/,/); // strip any comma delimited numbers of the end
       key = e.trim()
       if(!(cat in db)){
         db[cat] = Object.create(null);
       }
-      db[cat][key] = [0]; // accumulator 1st item in array
+      db[cat][key] = [0]; // set 1st entry in array as a counter
     }
   }
+//}, {key:0, value:0, cat:0}); doesn't work this way!
+// see https://stackoverflow.com/questions/34556558/what-is-the-purpose-of-thisarg-in-foreach
 });
+// IMPORTANT! remove key "Polestar" before placing here
 polestar = {"Freighter":{"(R)Atmospheric Control Unit":[1,"Chromatic Metal,60","Gold,30","Wiring Loom,1"],"(R)Freighter Hyperdrive":[1,"Chromatic Metal,250","Antimatter,2","Antimatter Housing,2"],"(R)Matter Beam":[1,"Antimatter,3","Magnetic Resonator,2","Wiring Loom,5"],"Warp Core Resonator":[0,"_Salvaged Frigate Mod,4","Cadmium,250","Quantum Computer,1","Antimatter Housing,4"],"Amplified Warp Shielding":[0,"^,Warp Core Resonator","_Salvaged Frigate Mod,4","Warp Hypercore,1","Quantum Computer,2","Cadmium,250"],"Chromatic Warp Shielding":[0,"^,Amplified Warp Shielding","_Salvaged Frigate Mod,8","Warp Hypercore,1","Solar Mirror,2","Emeril,250"],"Temporal Warp Computer":[0,"^,Chromatic Warp Shielding","_Salvaged Frigate Mod,12","Warp Hypercore,1","Magnetic Resonator,2","Indium,250"],"Plasmatic Warp Injector":[0,"^,Warp Core Resonator","_Salvaged Frigate Mod,8","Emeril,250","Solar Mirror,1","Antimatter Housing,5"],"Reality De-Threader":[0,"^,Plasmatic Warp Injector","_Salvaged Frigate Mod,12","Indium,250","Magnetic Resonator,1","Antimatter Housing,6"],"Matter Beam":[0,"_Salvaged Frigate Mod,4","Antimatter,5","Magnetic Resonator,3","Wiring Loom,10"],"Interstellar Scanner":[0,"^,Matter Beam","_Salvaged Frigate Mod,4","Chromatic Metal,160","Magnetised Ferrite,70","Wiring Loom,2    "],"Fuel Oxidiser":[0,"_Salvaged Frigate Mod,1","Quad Servo,2","Gold,50"],"Mind Control Device":[0,"_Salvaged Frigate Mod,1","Solar Mirror,1","Gold,50"],"Holographic Analyser":[0,"_Salvaged Frigate Mod,1","Quantum Computer,1","Gold,50"],"Mineral Compressor":[0,"_Salvaged Frigate Mod,1","Hydraulic Wiring,1","Gold,50"],"Explosive Drone":[0,"_Salvaged Frigate Mod,1","Walker Brain,1","Gold,50"]},"Polestar":{"Freighter Corridor":[0,"_Salvaged Frigate Mod,1","Silver,30","Tritium,5"],"Bulkhead Door":[0,"_Salvaged Frigate Mod,1","Silver,30"],"Freighter Glass Corridor":[0,"_Salvaged Frigate Mod,1","Silver,30","Glass,1"],"Freighter Stairs":[0,"_Salvaged Frigate Mod,1","Silver,30","Tritium,5"],"Ladder Module":[0,"_Salvaged Frigate Mod,1","Silver,30"],"Exterior Platform":[0,"_Salvaged Frigate Mod,1","Silver,50"],"Exterior Catwalk":[0,"_Salvaged Frigate Mod,1","Silver,30"],"Freighter Exterior Stairs":[0,"_Salvaged Frigate Mod,1","Silver,30"],"Freighter Glass Stairs":[0,"_Salvaged Frigate Mod,1","Silver,30","Glass,1"],"Reinforced Window":[0,"_Salvaged Frigate Mod,1","Silver,10","Glass,1"],"Internal Feighter Wall":[0,"_Salvaged Frigate Mod,1","Silver,10"],"Fleet Command Room":[1,"_Salvaged Frigate Mod,1","Silver,60","Gold,40","Tritium,10"],"Technology Room (Exp)":[0,"_Salvaged Frigate Mod,1","Silver,60","Chromatic Metal,20"],"Scanner Room":[1,"_Salvaged Frigate Mod,1","Silver,60","Gold,30","Ion Battery,1"],"Galactic Trade Room":[1,"_Salvaged Frigate Mod,1","Silver,60","Chromatic Metal,35","Microprocessor,2"],"Appearance Modifier Room":[0,"_Salvaged Frigate Mod,1","Silver,60","Carbon Nanotubes,4","Solar Mirror,1"],"Teleport Chamber":[1,"_Salvaged Frigate Mod,1","Silver,60","Antimatter,3","Amino Chamber,1"],"Cultivation Chamber":[0,"_Salvaged Frigate Mod,1","Silver,50","Oxygen,25","Faecium,10"],"Biological Room (Exp)":[0,"_Salvaged Frigate Mod,1","Silver,40","Oxygen,30"],"Double Cultivation Chamber":[1,"_Salvaged Frigate Mod,1","Silver,60","Oxygen,35","Faecium,25"],"Nutrition Room":[0,"_Salvaged Frigate Mod,1","Silver,60","Pure Ferrite,40","Oxygen,15"],"Refiner Room":[1,"_Salvaged Frigate Mod,1","Silver,60","Di-hydrogen,2","Gold,45"],"Industrial Room (Exp)":[0,"_Salvaged Frigate Mod,1","Silver,60","Pure Ferrite,20"],"Stellar Extractor Room":[1,"_Salvaged Frigate Mod,1","Silver,60","Gold,45","Magnetised Ferrite,40"],"Orbital Exocraft Materialiser":[1,"_Salvaged Frigate Mod,1","Gold,60","Ionised Cobalt,50","Warp Cell,3"],"Storage Room":[1,"_Salvaged Frigate Mod,1","Silver,50","Sodium,20"]},"Exocraft":{"Fusion Engine":[0,"Magnetised Ferrite,25","Life Support Gel,2"],"Humboldt Drive":[0,"Magnetised Ferrite,25","Life Support Gel,2"],"High-Power Sonar":[0,"_Nanites,10","Solar Mirror,1","Crystal Sulphide,3","Ferrite Dust,50"],"Osmotic Generator":[0,"^,High-Power Sonar","_Nanites,350","Chromatic Metal,150","Living Pearl,6","Solar Mirror,2"],"Tethys Beam":[0,"^,High-Power Sonar","_Nanites,450","Magnetised Ferrite,50","Chlorine,100","Living Pearl,10"],"Nautilon Cannon":[0,"^,High-Power Sonar","_Nanites,250","Chlorine,100","Crystal Sulphide,6","Living Pearl,2"],"Megawatt Heater":[0,"_Nanites,120","Phosphorus,80","Uranium,50","Wiring Loom,1"],"Air Filtration Unit":[0,"_Nanites,120","Copper,160","Carbon Nanotubes,5","Wiring Loom,1"],"Neutron Shielding":[0,"_Nanites,120","Ionised Cobalt,50","Deuterium,95","Wiring Loom,1"],"Termal Buffer":[0,"_Nanites,120","Dioxite,80","Hermetic Seal,2","Wiring Loom,1"],"Exocraft Signal Booster":[0,"_Nanites,120","Chromatic Metal,50","Microprocessor,1"],"Advanced Signal Booster":[0,"^,Exocraft Signal Booster","_Nanites,210","Chromatic Metal,100","Ion Battery,2","Microprocessor,2"],"Exocraft Signal Booster Upgrade":[0,"^,Exocraft Signal Booster","_Nanites,320","Chromatic Metal,150","Ion Battery,2","Gold,50"],"Exocraft Acceleration Module":[0,"_Nanites,180","Magnetised Ferrite,15","Chromatic Metal,50","Carbon Nanotubes,2"],"Icarus Fuel System":[0,"^,Exocraft Acceleration Module","_Nanites,120","Storm Crystal,3","Microprocessor,2","Wiring Loom,2"],"Exocraft Mining Laser":[0,"_Nanites,180","Magnetised Ferrite,25","Chromatic Metal,100","Life Support Gel,2"],"Exocraft Mining Laser Upg Sigma":[0,"^,Exocraft Mining Laser","_Nanites,210","Pugneum,50","Chromatic Metal,50"],"Exocrft Mounted Cannon":[0,"^,Exocraft Mining Laser","_Nanites,210","Pugneum,50","Copper,100"],"Daedalus Drive":[0,"Warp Hypercore,2","Metal Plating,2","Wiring Loom,1"],"Environment Control Unit":[0,"Storm Crystal,3","Microprocessor,2","Wiring Loom,2"],"Ariadne's Flame":[0,"Amino Chamber,1","Metal Plating,4","Carbon Nanotubes,10"],"Self-Greasing Servos":[0,"_Nanites,120","Magnetised Ferrite,40","Acid,1","Wiring Loom,1"],"Minotaur Radar Array":[0,"_Nanites,120","Chromatic Metal,75","Gold,50","Wiring Loom,1"],"Minotaur Laser":[0,"_Nanites,180","Chromatic Metal,80","Di-hydrogen,65","Wiring Loom,1"],"Precision Minotaur Laser":[0,"^,Minotaur Laser","_Nanites,210","Gravitino Ball,2","Solar Mirror,1"],"Minotaur Cannon":[0,"^,Minotaur Laser","_Nanites,210","Pugneum,50","Projectile Ammunition,200","Wiring Loom,1"],"Minotaur Bore":[0,"^,Minotaur Laser","_Nanites,210","Silicate Powder,100","Cobalt,40","Wiring Loom,1"]},"Transport":{"Roamer Geobay":[0,"_Salvaged Data,4","Metal Plating,4","Ion Battery,2","Paraffinium,50"],"Exocraft Summoning Station":[0,"_Salvaged Data,12","Uranium,100","Tritium,100","Unstable Plasma,4"],"Orbital Exocraft Materialiser":[0,"^,Exocraft Summoning Station","_Salvaged Data,15","Gold,150","Ionised Cobalt,50","Warp Cell,3"],"Nomad Geobay":[0,"_Salvaged Data,8","Metal Plating,5","Ion Battery,2","Paraffinium,50"],"Minotaur Geobay":[0,"_Salvaged Data,10","Metal Plating,5","Ion Battery,4","Gold,100"],"Nautilon Chamber":[1,"_Salvaged Data,10","Metal Plating,5","Crystal Sulphide,4","Salt,100"],"Pilgrim Geobay":[0,"_Salvaged Data,10","Metal Plating,5","Silver,100","Di-hydrogen Jelly,5"],"Colossus Geobay":[0,"_Salvaged Data,8","Metal Plating,5","Ion Battery,4","Paraffinium,100"],"Race Initiator":[0,"_Salvaged Data,10","Metal Plating,5","Microprocessor,2","Ion Battery,1"],"Race Obstacle":[0,"^,Race Initiator","_Salvaged Data,10","Metal Plating,5"],"Race Force Amplifier":[0,"^,Race Initiator","_Salvaged Data,10","Metal Plating,5","Di-hydrogen Jelly,2"]},"CrashedShip":{"(R)Deflector Shield":[0,"Chromatic Metal,50","Sodium Nitrate,13"],"(R)Efficient Thrusters":[0,"Tritium,100","Wiring Loom,2","Di-hydrogen Jelly,1"],"(R)Emergency Warp Unit":[0,"Warp Cell,1","Gold,110","Microprocessor,2"],"(R)Hyperdrive":[0,"Chromatic Metal,63","Microprocessor,3"],"(R)Launch Sys Recharger":[0,"Antimatter,3","Magnetic Resonator,1","Wiring Loom,1"],"(R)Launch Thrusters":[0,"Pure Ferrite,50","Di-hydrogen Jelly,1"],"(R)Photon Cannon":[0,"Pure Ferrite,50","Sodium Nitrate,30"],"(R)Pulse Engine":[0,"Hermetic Seal,1","Metal Plating,1"],"Burnt-Out Compressor":[0,"Wiring Loom,2","Antimatter,3"],"Containment Failure":[0,"Magnetised Ferrite,50","Chromatic Metal,60","Gold,45"],"Corroded Tanks":[0,"Activated Copper,75"],"Damaged Gears":[0,"Chromatic Metal,150","Wiring Loom,3"],"Exploded Panel":[0,"Pure Ferrite,125","Gold,75"],"Hull Fracture":[0,"Chromatic Metal,100"],"Hydraulics Damage":[0,"Oxygen,50","Dioxite,40"],"Melted Fuel Cell":[0,"Pyrite,60","Phosphorus,75","Metal Plating,3"],"Radiation Leak":[0,"Paraffinium,150","Pugneum,10"],"Rusted Circuits":[0,"Magnetised Ferrite,250","Chlorine,25"],"Scorched Plating":[0,"Chromatic Metal,75","Pugneum,25","Platinum,25"],"Shattered Bulwark":[0,"Platinum,50"]},"Exosuit":{"Haz-Mat Guantlets":[0,"_Nanites,80","Chromatic Metal,50","Sodium Nitrate,20"],"Personal Refiner":[0,"^,Haz-Mat Guantlets","_Nanites,360","Oxygen,150","Chromatic Metal,100"],"Hazard Protection":[0,"Ferrite Dust,100"],"Coolant Network":[0,"_Nanites,160","Phosphorus,150","Silver,60","Copper,75"],"Thermic Layer":[0,"_Nanites,160","Dioxite,150","Silver,60","Copper,75"],"Toxin Suppressor":[0,"_Nanites,160","Ammonia,150","Silver,60","Copper,75"],"Radiation Deflector":[0,"_Nanites,160","Uranium,150","Silver,60","Copper,75"],"Aeration Membrane":[0,"_Nanites,120","Oxygen,150","Silver,60","Chromatic Metal,75"],"Shield Lattice":[0,"_Nanites,120","Sodium Nitrate,60","Antimatter,1"],"Life Support":[0,"Ferrite Dust,100"],"Oxygen Recycler":[0,"Oxygen,60"],"Oxygen Rerouter":[0,"_Nanites,240","Chromatic Metal,100","Quantum Computer,1","Crystal Sulphide,6"],"Jetpack":[0,"Ferrite Dust,100"],"Neural Stimulator":[0,"_Nanites,90","Chromatic Metal,100","Condensed Carbon,100"],"Airburst Engine":[0,"^,Neural Stimulator","_Nanites,460","Chromatic Metal,100","Phosphorus,150","Oxygen,150"],"Rocket Boot":[0,"_Nanites,460","Tritium,100","Hydraulic Wiring,1"],"Efficient Water Jets":[0,"_Nanites,350","Chromatic Metal,100","Oxygen,100","Living Pearl,6"],"Simple Translator":[0,"_Nanites,90","Wiring Loom,1"],"Superior Translator":[0,"^,Simple Translator","_Nanites,310","Wiring Loom,2","Quantum Computer,1","Chromatic Metal,50"],"Advanced Translator":[0,"^,Superior Translator","_Nanites,580","Wiring Loom,3","Korvax Convergence Cube,2","Platinum,50"],"(S)Cold Protection":[0,"_Nanites,580"],"(S)Hot Protection":[0,"_Nanites,580"],"(S)Tox Protection":[0,"_Nanites,580"],"(S)Rad  Protection":[0,"_Nanites,580"],"(S)Underwater":[0,"_Nanites,580"],"(S)Shield":[0,"_Nanites,580"],"(S)Movement":[0,"_Nanites,580"]},"Starship":{"Teleport Receiver":[0,"_Nanites,150","Antimatter,1","Wiring Loom,3"],"Conflict Scanner":[0,"_Nanites,150","^,Teleport Receiver","Walker Brain,1","Wiring Loom,1"],"Economy Scanner":[0,"_Nanites,150","^,Teleport Receiver","Microprocessor,5","Wiring Loom,1"],"Pulse Engine":[0,"Hermetic Seal,1","Metal Plating,1","Wiring Loom,1"],"Instability Drive":[0,"_Nanites,460","Warp Cell,1","Tritium Hypercluster,3","Chromatic Metal,100"],"Sub-light Amplifier":[0,"_Nanites,460","Magnetic Resonator,3","Platinum,100","Tritium,200"],"Hyperdrive":[0,"Chromatic Metal,120","Microprocessor,5"],"Emergency Warp Unit":[0,"_Nanites,80","Warp Cell,1","Gold,220","Microprocessor,4"],"Cadmium Drive":[0,"_Nanites,80","Chromatic Metal,250","Wiring Loom,1"],"Emeril Drive":[0,"^,Cadmium Drive","_Nanites,120","Cadmium,250","Wiring Loom,3"],"Indium Drive":[0,"^,Emeril Drive","_Nanites,200","Emeril,250","Wiring Loom,5"],"Launch Thrusters":[0,"Pure Ferrite,100","Di-hydrogen Jelly,1"],"Eff Launch Thrusters":[0,"_Nanites,120","Di-hydrogen Jelly,1","Tritium,100","Wiring Loom,2"],"Launch Sys Recharger":[0,"^,Eff Launch Thrusters","_Nanites,460","Antimatter,5","Magnetic Resonator,2","Wiring Loom,2"],"Deflector Shield":[0,"Chromatic Metal,100","Sodium Nitrate,25"],"Ablative Armour":[0,"_Nanites,85","Wiring Loom,1","Gold,100","Sodium Nitrate,50"],"Photon Cannon":[0,"Pure Ferrite,100","Sodium Nitrate,60"],"Nonlinear Optics":[0,"_Nanites,75","Hermetic Seal,2","Wiring Loom,1","Tritium,100"],"Rocket Launcher":[0,"Copper,200","Condensed Carbon,100"],"Large Rocket Tubes":[0,"_Nanites,50","Wiring Loom,2","Unstable Plasma,4"],"Phase Beam":[0,"_Nanites,150","Tritium,100","Wiring Loom,1"],"Fourier De-Limiter":[0,"_Nanites,120","^,Phase Beam","Solar Mirror,1","Wiring Loom,2"],"Positron Ejector":[0,"_Nanites,150","Uranium,200","Wiring Loom,2"],"Fragment Supercharger":[0,"^,Positron Ejector","_Nanites,120","Magnetic Resonator,3","Wiring Loom,2"],"Infra-Knife Accelerator":[0,"_Nanites,150","Phosphorus,200","Wiring Loom,2"],"Q-Resonator":[0,"^,Infra-Knife Accelerator","_Nanites,120","Hydraulic Wiring,3","Quantum Computer,1","Wiring Loom,2"],"Cyclotron Ballista":[0,"_Nanites,150","Dioxite,200","Wiring Loom,2"],"Dyson Pump":[0,"^,Cyclotron Ballista","_Nanites,120","Amino Chamber,3","Wiring Loom,2"],"(S)Hyperdrive":[0,"_Nanites,580"],"(S)Pulse Engine":[0,"_Nanites,580"],"(S)Launch Thruster":[0,"_Nanites,580"],"(S)Photon Cannon":[0,"_Nanites,580"],"(S)Starship Shield":[0,"_Nanites,580"]},"Multitool":{"Mining Beam":[0,"Ferrite Dust,60"],"Terrain Manipulator":[0,"Carbon Nanotubes,2","Di-hydrogen Jelly,1"],"Advanced Mining Beam":[0,"Carbon Nanotubes,1","Hermetic Seal,1","Wiring Loom,2"],"Optical Drill":[0,"_Nanites,460","Quantum Computer,3","Solar Mirror,3","Wiring Loom,5"],"Waveform Recycler":[0,"_Nanites,120","Magnetised Ferrite,100","Ion Battery,1"],"Survey Device":[0,"^,Waveform Recycler","_Nanites,320","Magnetic Resonator,3","Quantum Computer,1","Wiring Loom,2"],"Personal Forcefield":[0,"Ion Battery,2","Wiring Loom,1"],"Combat Scope":[0,"_Nanites,80","Ion Battery,2","Wiring Loom,1"],"Boltcaster":[0,"Chromatic Metal,100","Carbon Nanotubes,3"],"Barrel Ioniser":[0,"_Nanites,90","Glass,4","Wiring Loom,1"],"Boltcaster Ricochet":[0,"^,Barrel Ioniser","_Nanites,90","Glass,4","Wiring Loom,1"],"Plasma Launcher":[0,"_Nanites,150","Amino Chamber,1","Hermetic Seal,1","Wiring Loom,1"],"Geology Cannon":[0,"^,Plasma Launcher","_Nanites,150","Magnetic Resonator,1","Wiring Loom,1"],"Blaze Javelin":[0,"_Nanites,250","Chromatic Metal,200","Condensed Carbon,150","Wiring Loom,1"],"Mass Accelerator":[0,"^,Blaze Javelin","_Nanites,180","Solar Mirror,1","Wiring Loom,1"],"Scatter Blaster":[0,"_Nanites,250","Pugneum,200","Wiring Loom,1"],"Shell Greaser":[0,"^,Scatter Blaster","_Nanites,180","Magnetic Resonator,1","Wiring Loom,1"],"Pulse Spitter":[0,"_Nanites,250","Deuterium,200","Wiring Loom,1"],"Amplified Cartridges":[0,"^,Pulse Spitter","_Nanites,180","Solar Mirror,1","Wiring Loom,1"],"Pulse Spitter Ricochet":[0,"^,Amplified Cartridges","_Nanites,180","Solar Mirror,1","Quantum Computer,1","Wiring Loom,1"],"(S)Scanner":[0,"_Nanites,580"],"(S)Mining Beam":[0,"_Nanites,580"],"(S)Boltcaster":[0,"_Nanites,580"],"(S)Plasma Launcher":[0,"_Nanites,580"],"(S)Blaze Javelin":[0,"_Nanites,580"],"(S)Scatter Blaster":[0,"_Nanites,580"],"(S)Pulse Spitter":[0,"_Nanites,580"]},"Recipes":{"Antimatter":[0,"Oxygen,30","Ferrite Dust,50",""],"Antimatter Housing":[0,"Chromatic Metal,25","Cpndensed Carbon,20",""],"Life Support Gel":[0,"Di-hydrogen Jelly,1","Carbon,20"],"Di-hydrogen Jelly":[0,"Di-hydrogen,40",""],"Carbon Nanotubes":[0,"Carbon,50"],"Hydraulic Wiring":[0,"_Nanites,250","Carbon Nanotubes,2","Salt,20","Di-hydrogen,40"],"Microprocessor":[0,"_Nanites,250","Chromatic Metal,40","Carbon Nanotubes,1"],"Quantum Computer":[0,"^,Microprocessor","_Nanites,250","Microprocessor,1","Antimatter,1","Chromatic Metal,25"],"Hermetic Seal":[0,"Condensed Carbon,30"],"Amino Chamber":[0,"_Nanites,250","Metal Plating,1","Chlorine,20","Condensed Carbon,25"],"Metal Plating":[0,"Ferrite Dust,50"],"Magnetic Resonator":[0,"_Nanites,250","Magnetised Ferrite,40","Ionised Cobalt,40"],"Solar Mirror":[0,"_Nanites,250","Gold,40","Silver,30","Chromatic Metal,25"],"Ion Battery":[0,"Cobalt,10","Ferrite Dust,5"],"Starshield Battery":[0,"_Nanites,250","Tritium,50","Gold,20"],"Starship Launch Fuel":[0,"Di-hydrogen,40","Metal Plating,1"],"Hydrothermal Fuel Cell":[0,"_Nanites,250","Salt,40","Cyto-Phosphate,40","Carbon,40"],"Unstable Plasma":[0,"_Nanites,250","Oxygen,50","Metal Plating,1"],"Warp Cell":[0,"Antimatter Housing,1","Antimatter,1"],"Atlaspass v1":[0,"_Nanites,250","Copper,200","Microprocessor,1"],"Atlaspass v2":[0,"^,Atlaspass v1","_Nanites,250","Cadmium,200","Microprocessor,1"],"Atlaspass v3":[0,"^,Atlaspass v2","_Nanites,250","Emeril,200","Microprocessor,1"],"Warp Hypercore":[0,"^,Atlaspass v2","_Nanites,250","Antimatter,1","Storm Crystal,1"]},"Valuables":{"Acid":[0,"Mordite,25","Fungal Mould,600"],"Lubricant":[0,"Faecium,50","Gamma Root,400"],"Unstable Gel":[0,"Cactus Flesh,200"],"Liquid Explosive":[0,"Acid,1","Unstable Gel,1"],"Glass":[0,"Frost Crystal,40"],"Living Glass":[0,"Lubricant,1","Glass,5"],"Poly Fibre":[0,"Cactus Flesh,100","Star Bulb,200"],"Heat Capacitor":[0,"Frost Crystal,100","Solanium,200"],"Circuit Board":[0,"Heat Capacitor,1","Poly Fibre,1"],"Enriched Carbon":[0,"Radon,250","Condensed Carbon,50"],"Organic Catalyst":[0,"Thermic Condensate,1","Enriched Carbon,1"],"Fusion Accelerant":[0,"Organic Catalyst,1","Nitrogen Salt,1"],"Nitrogen Salt":[0,"Nitrogen,250","Condensed Carbon,50"],"Semiconductor":[0,"Thermic Condensate,1","Nitrogen Salt,1"],"Superconductor":[0,"Semiconductor,1","Enriched Carbon,1"],"Hot Ice":[0,"Enriched Carbon,1","Nitrogen Salt,1"],"Cryo-Pump":[0,"Hot Ice,1","Thermic Condensate,1"],"Thermic Condensate":[0,"Sulphurine,250","Condensed Carbon,50"],"Aronium":[0,"Paraffinium,50","Ionised Cobalt,50"],"Dirty Bronze":[0,"Pyrite,50","Pure Ferrite,100"],"Herox":[0,"Ammonia,50","Ionised Cobalt,50"],"Lemmium":[0,"Uranium,50","Pure Ferrite,100"],"Mango-Gold":[0,"Phosphorus,50","Ionised Cobalt,50"],"Iridesite":[0,"Aronium,1","Mango-Gold,1","Grantine,1"],"Grantine":[0,"Dioxite,50","Ionised Cobalt,50"],"Geodesite":[0,"Dirty Bronze,1","Herox,1","Lemmium,1"],"Portable Reactor":[0,"Liquid Explosive,1","Fusion Accelerant,1"],"Quantum Processor":[0,"Circuit Board,1","Superconductor,1"],"Fusion Ignitor":[0,"Quantum Processor,1","Portable Reactor,1","Geodesite,1"],"Cryogenic Chamber":[0,"Living Glass,1","Cryo-Pump,1"],"Stasis Device":[0,"Quantum Processor,1","Cryogenic Chamber,1","Iridesite,1"]},"Technology":{"Base Computer":[0,"Chromatic Metal,30"],"Save Point":[0,"Metal Plating,2","Di-hydrogen Jelly,1"],"Save Beacon":[0,"_Salvaged Data,1","Metal Plating,2","Sodium Nitrate,15"],"Galactic Trade Terminal":[0,"_Salvaged Data,10","Magnetised Ferrite,25","Microprocessor,3"],"Message Module":[0,"_Salvaged Data,1","Metal Plating,1","Carbon Nanotubes,1"],"Communications Station":[0,"^,Message Module","_Salvaged Data,1","Pure Ferrite,20"],"Health Station":[0,"_Salvaged Data,5","Metal Plating,1","Ionised Cobalt,20","Uranium,50"],"Hazard Protection Unit":[0,"^,Health Station","_Salvaged Data,3","Metal Plating,1","Ionised Cobalt,20","Phosphorus,50"],"Base Teleport Module":[0,"_Salvaged Data,2","Metal Plating,4","Carbon Nanotubes,2","Sodium,40"],"Storage Container 0":[0,"_Salvaged Data,5","Magnetised Ferrite,35","Sodium,20"],"Appearance Modifier":[0,"_Salvaged Data,10","Ferrite Dust,20"],"Landing Pad":[0,"_Salvaged Data,10","Metal Plating,10","Ion Battery,2","Microprocessor,2"],"Short-Range Teleporter":[0,"^,Landing Pad","_Salvaged Data,10","Metal Plating,2","Chromatic Metal,40","Gold,30"],"Teleport Cable":[0,"^,Landing Pad","_Salvaged Data,0"],"Portalble Refiner":[0,"Metal Plating,1","Oxygen,30"],"Signal Booster":[0,"_Salvaged Data,1","Metal Plating,1","Carbon Nanotubes,1","Sodium,15"],"Medium Refiner":[0,"_Salvaged Data,10","Magnetised Ferrite,100","Di-hydrogen Jelly,5"],"Large Refiner":[0,"^,Medium Refiner","_Salvaged Data,10","Chromatic Metal,200","Sodium Nitrate,100","Microprocessor,5"],"Antimatter Reactor":[0,"^,Medium Refiner","_Salvaged Data,20","Storm Crystal,5","Antimatter,2","Metal Plating,2"],"Nutrient Processor":[0,"_Salvaged Data,10","Metal Plating,2","Hermetic Seal,1","Sodium,25"],"Livestock Unit":[0,"_Salvaged Data,10","Metal Plating,4","Poly Fibre,2","Faecium,50"],"Automated Feeder":[0,"_Salvaged Data,10","Metal Plating,4","Amino Chamber,1","Creature Pellets,10"],"Light Box":[0,"_Salvaged Data,1","Sodium,5"],"Light Floor":[0,"_Salvaged Data,10","Sodium,5"],"Noise Box":[0,"_Salvaged Data,10","Metal Plating,2","Ion Battery,2","Phosphorus,40"],"ByteBeat Cable":[0,"^,Noise Box","_Salvaged Data,0"],"ByteBeat Device":[0,"^,Noise Box","_Salvaged Data,10","Metal Plating,3","Gold,50","Antimatter,1"],"ByteBeat Switch":[0,"^,Noise Box","_Salvaged Data,2","Ferrite Dust,25","Ionised Cobalt,15"],"Sphere Creator":[0,"_Salvaged Data,10","Metal Plating,5","Ion Battery,4","Paraffinium,100"]},"Industrial":{"Electrical Wiring":[0,"_Salvaged Data,0"],"Biofuel Reactor":[0,"_Salvaged Data,1","Metal Plating,1","Oxygen,25"],"Electrical Cloaking Device":[0,"_Salvaged Data,1","Metal Plating,1","Gold,30","Chromatic Metal,40"],"Solar Panel":[0,"_Salvaged Data,8","Metal Plating,1","Gold,30","Chromatic Metal,50"],"Battery":[0,"_Salvaged Data,3","Magnetised Ferrite,60","Condensed Carbon,100"],"Electromagnetic Generator":[0,"^,Solar Panel","_Salvaged Data,10","Metal Plating,2","Magnetised Ferrite,60","Chromatic Metal,75"],"Mineral Extractor":[0,"_Salvaged Data,10","Metal Plating,5","Chromatic Metal,100"],"Gas Extractor":[0,"^,Mineral Extractor","_Salvaged Data,10","Metal Plating,5","Chromatic Metal,100"],"Supply Depot":[0,"^,Mineral Extractor","_Salvaged Data,10","Metal Plating,10"],"Supply Pipe":[0,"^,Mineral Extractor","_Salvaged Data,1","Ferrite Dust,25","Carbon,10"],"Wall Switch":[0,"_Salvaged Data,1","Ferrite Dust,25","Ionised Cobalt,25"],"Floor Switch":[0,"_Salvaged Data,1","Ferrite Dust,25","Ionised Cobalt,25"],"Proximity Switch":[0,"_Salvaged Data,1","Carbon,20"],"Button":[0,"_Salvaged Data,1","Carbon,20"],"Power Inverter":[0,"_Salvaged Data,1","Ferrite Dust,25","Ionised Cobalt,15"],"Auto Switch":[0,"_Salvaged Data,1","Ferrite Dust,25","Ionised Cobalt,15"]},"Wooden":{"Wooden Wall":[0,"Carbon,25"],"Wooden Floor Panel":[0,"Carbon,10"],"Wooden-Framed Glass Panel":[0,"_Salvaged Data,3","Carbon,10"],"Wooden Ramp":[0,"_Salvaged Data,1","Carbon,25","Pure Ferrite,10"],"Wooden Half Ramp":[0,"^,Wooden Ramp","_Salvaged Data,1","Carbon,15","Pure Ferrite,5"],"Small Wooden Panel":[0,"_Salvaged Data,1","Carbon,5"],"Wooden Triangle":[0,"_Salvaged Data,1","Carbon,10"],"Small Wooden Triangle":[0,"^,Wooden Triangle","_Salvaged Data,1","Carbon,5"],"Thin Wooden Wall":[0,"_Salvaged Data,1","Carbon,10"],"Sloping Wooden Panel":[0,"^,Thin Wooden Wall","_Salvaged Data,1","Carbon,10"],"Small Wooden Wall":[0,"^,Thin Wooden Wall","_Salvaged Data,1","Carbon,10"],"Short Wooden Wall":[0,"^,Small Wooden Wall","_Salvaged Data,1","Carbon,10"],"Wooden Door Frame":[0,"Carbon,25"],"Wooden Window Panel":[0,"_Salvaged Data,1","Carbon,25","Glass,1"],"Wooden Frontage":[0,"^,Wooden Window Panel","_Salvaged Data,2","Carbon,25","Pure Ferrite,10"],"Wooden Doorway":[0,"_Salvaged Data,2","Carbon,10"],"Wooden Power Door":[0,"_Salvaged Data,2","Carbon,25"],"Wooden Roof":[0,"Carbon,10","Ferrite Dust,10"],"Wooden Roof Panel":[0,"_Salvaged Data,1","Carbon,10","Ferrite Dust,10"],"Wooden Roof Corner":[0,"_Salvaged Data,1","Carbon,10","Ferrite Dust,10"],"Wooden Inner Roof Corner":[0,"^,Wooden Roof Corner","_Salvaged Data,1","Carbon,10","Ferrite Dust,10"],"Wooden Arch":[0,"_Salvaged Data,1","Carbon,25"],"Wooden Half Arch":[0,"^,Wooden Arch","_Salvaged Data,1","Carbon,10"]},"Metal":{"Metal Wall":[0,"_Salvaged Data,1","Ferrite Dust,25"],"Metal Floor Panel":[0,"_Salvaged Data,1","Ferrite Dust,10"],"Metal-Framed Glass Panel":[0,"_Salvaged Data,3","Ferrite Dust,10"],"Metal Ramp":[0,"_Salvaged Data,1","Ferrite Dust,25","Pure Ferrite,10"],"Metal Half Ramp":[0,"^,Metal Ramp","_Salvaged Data,1","Ferrite Dust,15","Pure Ferrite,5"],"Small Metal Panel":[0,"_Salvaged Data,1","Ferrite Dust,5"],"Metal Triangle":[0,"_Salvaged Data,1","Ferrite Dust,10"],"Small Metal Triangle":[0,"^,Metal Triangle","_Salvaged Data,1","Ferrite Dust,5"],"Thin Metal Wall":[0,"_Salvaged Data,1","Carbon,10"],"Sloping Metal Panel":[0,"^,Thin Metal Wall","_Salvaged Data,1","Ferrite Dust,10"],"Small Metal Wall":[0,"^,Thin Metal Wall","_Salvaged Data,1","Ferrite Dust,10"],"Short Metal Wall":[0,"^,Small Metal Wall","_Salvaged Data,1","Carbon,10"],"Metal Door Frame":[0,"_Salvaged Data,2","Ferrite Dust,25"],"Metal Window Panel":[0,"_Salvaged Data,2","Ferrite Dust,25","Glass,1"],"Metal Frontage":[0,"^,Metal Window Panel","_Salvaged Data,3","Ferrite Dust,25","Pure Ferrite,10"],"Metal Doorway":[0,"^,Metal Door Frame","_Salvaged Data,1","Carbon,10"],"Metal Power Door":[0,"^,Metal Door Frame","_Salvaged Data,2","Carbon,25"],"Metal Roof":[0,"_Salvaged Data,2","Ferrite Dust,10"],"Metal Roof Panel":[0,"_Salvaged Data,1","Carbon,10","Ferrite Dust,10"],"Metal Roof Corner":[0,"_Salvaged Data,1","Carbon,10","Ferrite Dust,10"],"Metal Inner Roof Corner":[0,"^,Metal Roof Corner","_Salvaged Data,1","Carbon,10","Ferrite Dust,10"],"Metal Arch":[0,"_Salvaged Data,1","Ferrite Dust,25"],"Metal Half Arch":[0,"^,Metal Arch","_Salvaged Data,1","Ferrite Dust,10"]},"Concrete":{"Concrete Wall":[0,"_Salvaged Data,1","Silicate Powder,25"],"Concrete Floor Panel":[0,"_Salvaged Data,1","Silicate Powder,10"],"Concrete-Framed Glass Panel":[0,"_Salvaged Data,3","Silicate Powder,10"],"Concrete Ramp":[0,"_Salvaged Data,1","Silicate Powder,25","Pure Ferrite,10"],"Concrete Half Ramp":[0,"^,Concrete Ramp","_Salvaged Data,1","Silicate Powder,15","Pure Ferrite,5"],"Small Concrete Panel":[0,"_Salvaged Data,1","Silicate Powder,5"],"Concrete Triangle":[0,"_Salvaged Data,1","Silicate Powder,10"],"Small Concrete Triangle":[0,"^,Concrete Triangle","_Salvaged Data,1","Silicate Powder,5"],"Thin Concrete Wall":[0,"_Salvaged Data,1","Silicate Powder,10"],"Sloping Concrete Panel":[0,"^,Thin Concrete Wall","_Salvaged Data,1","Silicate Powder,10"],"Small Concrete Wall":[0,"^,Thin Concrete Wall","_Salvaged Data,1","Silicate Powder,10"],"Short Concrete Wall":[0,"^,Small Concrete Wall","_Salvaged Data,1","Silicate Powder,10"],"Concrete Door Frame":[0,"_Salvaged Data,2","Silicate Powder,25"],"Concrete Window Panel":[0,"_Salvaged Data,2","Silicate Powder,25","Glass,1"],"Concrete Frontage":[0,"^,Concrete Window Panel","_Salvaged Data,3","Silicate Powder,25","Pure Ferrite,10"],"Concrete Doorway":[0,"^,Concrete Door Frame","_Salvaged Data,1","Silicate Powder,10"],"Concrete Power Door":[0,"^,Concrete Door Frame","_Salvaged Data,2","Carbon,25"],"Concrete Roof":[0,"_Salvaged Data,2","Silicate Powder,10"],"Concrete Roof Panel":[0,"_Salvaged Data,1","Silicate Powder,15"],"Concrete Roof Corner":[0,"_Salvaged Data,1","Silicate Powder,15"],"Concrete Inner Roof Corner":[0,"^,Concrete Roof Corner","_Salvaged Data,1","Carbon,10","Ferrite Dust,10"],"Concrete Arch":[0,"_Salvaged Data,1","Silicate Powder,25"],"Concrete Half Arch":[0,"^,Concrete Arch","_Salvaged Data,1","Silicate Powder,10"]},"LargePrefabs":{"Cylindrical Room":[0,"_Salvaged Data,3","Pure Ferrite,250"],"Square Room":[0,"_Salvaged Data,3","Pure Ferrite,250"],"Foundation":[0,"_Salvaged Data,3","Pure Ferrite,100"],"Paving":[0,"^,Foundation","_Salvaged Data,1","Pure Ferrite,5"],"Paving2":[0,"^,Paving","_Salvaged Data,1","Pure Ferrite,5"],"Paving3":[0,"^,Paving","_Salvaged Data,1","Pure Ferrite,25"],"Cylindrical Room Frame":[0,"^,Foundation","_Salvaged Data,3","Pure Ferrite,100"],"Straight Corridor":[0,"_Salvaged Data,5","Pure Ferrite,75"],"L-Shaped Corridor":[0,"_Salvaged Data,5","Pure Ferrite,75"],"T-Shaped Corridor":[0,"_Salvaged Data,5","Pure Ferrite,75"],"X-Shaped Corridor":[0,"_Salvaged Data,5","Pure Ferrite,75"],"Glass Roofed Corridor":[0,"_Salvaged Data,5","Pure Ferrite,75","Glass,1"],"Prefab Window":[0,"_Salvaged Data,1","Silver,25","Glass,1"],"Prefab Window2":[0,"_Salvaged Data,1","Silver,25","Glass,1"],"Large Glass Panel":[0,"_Salvaged Data,1","Glass,1"],"Bio-Dome":[0,"_Salvaged Data,10","Magnetised Ferrite,25","Glass,5"],"Viewing Sphere":[0,"_Salvaged Data,10","Magnetised Ferrite,25","Glass,3"],"Curved Corridor":[0,"_Salvaged Data,3","Pure Ferrite,75"],"Door":[0,"_Salvaged Data,1","Pure Ferrite,40"],"Holo-Door":[0,"_Salvaged Data,8","Gold,40","Pure Ferrite,40","Silicate Powder,40"],"Access Ramp":[0,"_Salvaged Data,1","Pure Ferrite,40","Carbon,50"],"Climb Ladder":[0,"_Salvaged Data,1","Pure Ferrite,30"]},"SmallPrefabs":{"Cuboid Room":[0,"_Salvaged Data,2","Pure Ferrite,100"],"Cuboid Room Fdn Strut":[0,"_Salvaged Data,1","Pure Ferrite,50"],"Cuboid Room Frame":[0,"_Salvaged Data,1","Pure Ferrite,50"],"Cuboid Room Flooring":[0,"_Salvaged Data,1","Pure Ferrite,50"],"Cuboid Room Fdn Quad":[0,"_Salvaged Data,1","Pure Ferrite,50"],"Curved Cuboid Wall":[0,"_Salvaged Data,3","Pure Ferrite,75"],"Interior Stairs":[0,"_Salvaged Data,2","Pure Ferrite,40","Carbon,30"],"Infrastructure Ladder":[0,"_Salvaged Data,1","Pure Ferrite,20"],"Cuboid Inner Wall":[0,"_Salvaged Data,1","Pure Ferrite,50"],"Cuboid Inner Door":[0,"_Salvaged Data,1","Pure Ferrite,40"],"Cuboid Roof Cap":[0,"_Salvaged Data,2","Pure Ferrite,50"],"Glass Cuboid Room":[0,"_Salvaged Data,5","Silver,75","Glass,2"],"Curved Cuboid Roof":[0,"_Salvaged Data,3","Pure Ferrite,50","Glass,2"],"Cuboid Window":[0,"_Salvaged Data,1","Silver,25","Glass,1"],"Cuboid Window2":[0,"_Salvaged Data,1","Silver,25","Glass,1"]},"Aquatic":{"Deep Water Chamber":[0,"_Salvaged Data,6","Pure Ferrite,180"],"Marine Shelter":[0,"_Salvaged Data,10","Living Pearl,5","Glass,1","Oxygen,25"],"Glass Tunnel":[0,"_Salvaged Data,3","Glass,1","Crystal Sulphide,2","Ferrite Dust,25"],"Large Glass Panel2":[0,"_Salvaged Data,1","Glass,1"],"L-Shaped Glass Tunnel":[0,"_Salvaged Data,3","Glass,1","Crystal Sulphide,2","Ferrite Dust,25"],"T-Shaped Glass Tunnel":[0,"_Salvaged Data,3","Glass,1","Crystal Sulphide,2","Ferrite Dust,25"],"X-Shaped Glass Tunnel":[0,"_Salvaged Data,3","Glass,1","Crystal Sulphide,2","Ferrite Dust,25"],"Vertical Glass Tunnel":[0,"_Salvaged Data,3","Glass,1","Crystal Sulphide,2","Ferrite Dust,25"],"Square Deep Water Chamber":[0,"_Salvaged Data,6","Pure Ferrite,180"],"Watertight Door":[0,"_Salvaged Data,2","Ferrite Dust,25","Crystal Sulphide,1"],"Moon Pool Floor":[0,"_Salvaged Data,10","Ferrite Dust,80","Crystal Sulphide,3","Living Pearl,2"],"Nautilon Chamber":[0,"_Salvaged Data,10","Metal Plating,5","Crystal Sulphide,4","Salt,100"]},"Agriculture":{"Hydroponic Tray":[0,"_Salvaged Data,3","Pure Ferrite,30","Metal Plating,2","Carbon,20"],"Potted Plant":[0,"_Salvaged Data,1","Carbon,10"],"Standing Planter":[0,"_Salvaged Data,2","Metal Plating,2","Condensed Carbon,25"],"Flora Containment":[0,"_Salvaged Data,1","Carbon,15"],"Flora Containment2":[0,"_Salvaged Data,1","Carbon,15"],"Flora Containment3":[0,"_Salvaged Data,1","Carbon,15"],"Large Hydroponic Tray":[0,"_Salvaged Data,10","Pure Ferrite,60","Metal Plating,4","Carbon,50"],"Fungal Cluster":[0,"_Salvaged Data,3","Fungal Mould,50","Ammonia,25"],"Venom Urchin":[0,"_Salvaged Data,3","Emeril,100","Gold,50"],"Frostwort":[0,"_Salvaged Data,3","Frost Crystal,50","Dioxite,25"],"Gravitino Host":[0,"_Salvaged Data,3","Chromatic Metal,25","Silver,120","Magnetised Ferrite,25"],"Gamma Weed":[0,"_Salvaged Data,3","Gamma Root,50","Uranium,25"],"Gutrot Flower":[0,"_Salvaged Data,3","Faecium,40"],"Echinocactus":[0,"_Salvaged Data,3","Cactus Flesh,50","Pyrite,25"],"Mordite Root":[0,"_Salvaged Data,3","Mordite,40"],"Star Bramble":[0,"_Salvaged Data,3","Star Bulb,50","Paraffinium,25"],"Albumen Pearl Orb":[0,"_Salvaged Data,3","Indium,60","Paraffinium,20"],"Solar Vine":[0,"_Salvaged Data,3","Solanium,50","Phosphorus,25"],"NipNip":[0,"_Salvaged Data,3","NipNip Buds,1","Faecium,20"]}};
 }
-/*
-listeners
-*function combo[change]
-*function anal[click]
-function analyse(recipe,status,doc){
+/* TODO
+     accum once for multiple _nanites, _salvaged data -- solved!
+     cp[key].num += ( !prop.match(/^\(S\)/) && key.match(/^_/) ? 1 : num ) * value;
 
-*function localstore[click]
-*function clr[click]
-function localstore(e){
-function hilite(slot){
+      <button class="b c">
+      <span class="r">_Nanites,6260 @0</span>
+      <span class="i">x10 Optical Drill,460</span>
+      <span class="i">x10 (S)Scanner,580</span></button>
 
+      <button class="b c">
+      <span class="r">_Salvaged Data,2 @0</span>
+      <span class="i">x10 Base Teleport Module,2</span></button>
 
-function toggle_menu(){
-function toggle_plus(){
-function toggle_times(){
-function toggle_ones(){
-function toggle_zero(){
-function toggle_onoff(){
-
-
-function flow(){
-function delta(aL, aR, status){
-
-function changeDb(cat){
-function displayDb(){
-function displayCp(){
-function createSpan(element, c, status, text){
-function accum(e){
-
-function addCombo(textb) {
-function init(){
+     Owned recipes = [carbon nanotube,c 50],[di-jelly,h 40],[metal plating,fe 50],[hermetic seal,c+ 30],[ch,cu 2] etc
+*/
+/* NOTE:
+      Form + 0 lines of detail = 40 + 18*0 px
+      Form + 1 lines of detail = 40 + 18*1 px 
+      Form + 2 lines of detail = 40 + 18*2 px
+      etc.
+      (no_of_forms * 40 + no_of_lines * 18) / 2 is the split amount
+      so, how many px's are in the block that causes the split?
+      How do you split a list of numbers that represent lengths?
+      40 / 18 = 2.222
+      toggle =≠ needs to re-calculate max; displayCP(), toggleMenu(), Object.keys(cp).sort().forEach((prop)
 */
 </script>
 </body>
