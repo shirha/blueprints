@@ -203,6 +203,82 @@ function hilite(slot){
   }
 }
 
+/* set increment amount to 1, 10, 100, 1000 */
+function toggle_times(){
+  let text = document.getElementById("power");
+  text.innerHTML = (parseInt(text.innerHTML) + 1) % 4;
+}
+/* toggle blueprint between summary and detail */
+function toggle_menu(){
+  let text = document.getElementById("menu"), attr;
+  [text.innerHTML, attr] = text.innerHTML == "=" ? ["≠", "none"] : ["=", "block"];
+  let elements = document.getElementsByClassName('i');
+  for (let i = 0; i < elements.length; i++) {
+    elements[i].style.display = attr;
+  }
+  flow();
+}
+
+/* toggle whether to add or subtract increment amount */
+function toggle_plus(){
+  let text = document.getElementById("plus");
+  text.innerHTML = text.innerHTML == "+" ? "-" : "+";
+}
+/* set all amounts to 1 in current category */
+function toggle_ones(){
+  let cat = document.getElementById("combo").value;
+  for(const prop in db[cat]){
+    db[cat][prop][0] = 1;
+    document.getElementById(prop).childNodes[0].innerHTML = `${prop},${db[cat][prop][0]}`;
+  }
+}
+/* set all amounts to 0 in current category */
+function toggle_zero(){
+  let cat = document.getElementById("combo").value;
+  for(const prop in db[cat]){
+    db[cat][prop][0] = 0;
+    document.getElementById(prop).childNodes[0].innerHTML = `${prop},${db[cat][prop][0]}`;
+  }
+}
+/* toggle whether this category is included in components view */
+function toggle_onoff(){
+  let text = document.getElementById("onoff"),
+    cat = document.getElementById("combo").value;
+  include[cat] = text.innerHTML = text.innerHTML == "○" ? "●"  : "○";
+}
+/* change category to display */
+function changeDb(cat){
+  console.log(`cat=${cat}`);
+  let doc = document.querySelectorAll("table");
+  for (let i = 0; i < doc.length; i++) {
+    doc[i].style.display = 'none';
+  }
+  document.getElementById("clr").style.display = "none";
+  document.getElementById(cat).style.display = 'block';
+  doc = document.querySelectorAll(".m"); // menu buttons
+  for (let i = 0; i < doc.length; i++) {
+    doc[i].style.display = 'none';
+  }
+
+  if(cat == "Components"){
+    document.getElementById("menu" ).style.display = "inline-block";
+ // let memCache = [], memValid = false;
+ // if(!memValid)
+      displayCp(); // memValid = true; accum() & anal() -> memValid = false;
+    flow();
+  }else if(cat != "Localstore"){
+    document.getElementById("menu" ).style.display = "inline-block";
+    document.getElementById("plus" ).style.display = "inline-block";
+    document.getElementById("times").style.display = "inline-block";
+    document.getElementById("ones" ).style.display = "inline-block";
+    document.getElementById("zero" ).style.display = "inline-block";
+    document.getElementById("onoff").style.display = "inline-block";
+    document.getElementById("onoff").innerHTML = include[cat];
+    flow();
+  }
+}
+
+/* evenly balance the buttons in the two .col divs */
 function flow(){
   let cat = combo.options[combo.selectedIndex].text,
       status = document.getElementById("menu").innerHTML,
@@ -277,78 +353,6 @@ function delta2(aL, aR, status){
   console.log(minIndex,delta);
 }
 
-/* set increment amount to 1, 10, 100, 1000 */
-function toggle_times(){
-  let text = document.getElementById("power");
-  text.innerHTML = (parseInt(text.innerHTML) + 1) % 4;
-}
-/* toggle blueprint between summary and detail */
-function toggle_menu(){
-  let text = document.getElementById("menu"), attr;
-  [text.innerHTML, attr] = text.innerHTML == "=" ? ["≠", "none"] : ["=", "block"];
-  let elements = document.getElementsByClassName('i');
-  for (let i = 0; i < elements.length; i++) {
-    elements[i].style.display = attr;
-  }
-  flow();
-}
-
-/* toggle whether to add or subtract increment amount */
-function toggle_plus(){
-  let text = document.getElementById("plus");
-  text.innerHTML = text.innerHTML == "+" ? "-" : "+";
-}
-/* set all amounts to 1 in current category */
-function toggle_ones(){
-  let cat = document.getElementById("combo").value;
-  for(const prop in db[cat]){
-    db[cat][prop][0] = 1;
-    document.getElementById(prop).childNodes[0].innerHTML = `${prop},${db[cat][prop][0]}`;
-  }
-}
-/* set all amounts to 0 in current category */
-function toggle_zero(){
-  let cat = document.getElementById("combo").value;
-  for(const prop in db[cat]){
-    db[cat][prop][0] = 0;
-    document.getElementById(prop).childNodes[0].innerHTML = `${prop},${db[cat][prop][0]}`;
-  }
-}
-/* toggle whether this category is included in components view */
-function toggle_onoff(){
-  let text = document.getElementById("onoff"),
-    cat = document.getElementById("combo").value;
-  include[cat] = text.innerHTML = text.innerHTML == "○" ? "●"  : "○";
-}
-/* change category to display */
-function changeDb(cat){
-  console.log(`cat=${cat}`);
-  let doc = document.querySelectorAll("table");
-  for (let i = 0; i < doc.length; i++) {
-    doc[i].style.display = 'none';
-  }
-  document.getElementById("clr").style.display = "none";
-  document.getElementById(cat).style.display = 'block';
-  doc = document.querySelectorAll(".m"); // menu buttons
-  for (let i = 0; i < doc.length; i++) {
-    doc[i].style.display = 'none';
-  }
-
-  if(cat == "Components"){
-    document.getElementById("menu" ).style.display = "inline-block";
-    displayCp();
-    flow();
-  }else if(cat != "Localstore"){
-    document.getElementById("menu" ).style.display = "inline-block";
-    document.getElementById("plus" ).style.display = "inline-block";
-    document.getElementById("times").style.display = "inline-block";
-    document.getElementById("ones" ).style.display = "inline-block";
-    document.getElementById("zero" ).style.display = "inline-block";
-    document.getElementById("onoff").style.display = "inline-block";
-    document.getElementById("onoff").innerHTML = include[cat];
-    flow();
-  }
-}
 /* populate all categories with blueprints */
 function displayDb(){
   let status = document.getElementById("menu").innerHTML, element;
