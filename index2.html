@@ -129,6 +129,14 @@ console.log(price);
 console.log(db);
 document.getElementById("info").innerHTML = screen.width;
 
+// storing an item in slot7 called "Polestar" not allowed
+let slot7 = localStorage.getItem("slot7");
+if(slot7){
+  let polestar = JSON.parse(slot7);
+  if(polestar[0] == "Polestar"){
+    localStorage.removeItem("slot7"); 
+  }
+}
 /* create a default 'All Ones' in localstorage[slot8] */
 if(localStorage.getItem("slot8") === null) {
   let ones = JSON.parse(JSON.stringify(db));
@@ -138,18 +146,7 @@ if(localStorage.getItem("slot8") === null) {
   } }
   localStorage.setItem('slot8', JSON.stringify(['All Ones', ones]));
 }
-//--------------------------------------------
-if(localStorage.getItem("slot7") === null) {
-  localStorage.setItem('slot7', JSON.stringify(['Polestar', polestar]));
-  db = polestar;
-  displayDb();
-  document.querySelector('#combo [value="Components"]').selected = true;
-  changeDb("Components");
-} else if(localStorage.getItem("slot7") === "Polestar") {
-  localStorage.setItem('slot7', JSON.stringify(['Polestar', polestar]));
-  polestar = null;
-}
-//-------------------------------------------- remove 'polestar' at bottom
+
 /* add event listeners for Localstore buttons */
 let btn = document.querySelectorAll("#Localstore button");
 for (let i = 0; i < btn.length; i++) {
@@ -168,6 +165,7 @@ for (let i = 0; i < btn.length; i++) {
 
 /* event handler for Localstore */
 function localstore(e){
+  console.log("localstore");
   let text = e.target.parentElement.firstChild,
     key = e.target.parentElement.firstChild.id,
     op = e.target.className;
@@ -177,7 +175,7 @@ function localstore(e){
       localStorage.removeItem(key);
       hilite();
     }else{
-      if(key != "slot7" && key != "slot8"){
+      if(!(key == "slot8" && text.value == "All Ones")){ // can't alter slot8:"All Ones"
         localStorage.setItem(key, JSON.stringify([text.value,db]));
         hilite(key);
       }
@@ -252,6 +250,7 @@ function changeDb(cat){
   for (let i = 0; i < doc.length; i++) {
     doc[i].style.display = 'none';
   }
+  document.getElementById("info").style.display = "none";
   document.getElementById("clr").style.display = "none";
   document.getElementById(cat).style.display = 'block';
   doc = document.querySelectorAll(".m"); // menu buttons
@@ -259,7 +258,9 @@ function changeDb(cat){
     doc[i].style.display = 'none';
   }
 
-  if(cat == "Components"){
+  if(cat == "Localstore"){
+    document.getElementById("info").style.display = "block";
+  }else if(cat == "Components"){
     document.getElementById("menu" ).style.display = "inline-block";
       displayCp();
     flow();
@@ -531,6 +532,7 @@ Chromatic Metal,88
 Circuit Board,916250
 Cobalt,76
 Copper,41
+Counterfeit Circuits,68000
 Creature Pellets,20
 Cryo-Pump,1500000
 Cryogenic Chamber,3800000
@@ -709,20 +711,20 @@ Wiring Loom,25000`
     Platinum,50
 
 Freighter
-  (R)Atmospheric Control Unit
-    Chromatic Metal,60
-    Gold,30
-    Wiring Loom,1
+  // (R)Atmospheric Control Unit
+  //   Chromatic Metal,60
+  //   Gold,30
+  //   Wiring Loom,1
 
-  (R)Freighter Hyperdrive
-    Chromatic Metal,250
-    Antimatter,2
-    Antimatter Housing,2
+  // (R)Freighter Hyperdrive
+  //   Chromatic Metal,250
+  //   Antimatter,2
+  //   Antimatter Housing,2
 
-  (R)Matter Beam
-    Antimatter,3
-    Magnetic Resonator,2
-    Wiring Loom,5
+  // (R)Matter Beam
+  //   Antimatter,3
+  //   Magnetic Resonator,2
+  //   Wiring Loom,5
 
   Warp Core Resonator
     _Salvaged Frigate Mod,4
@@ -1297,16 +1299,23 @@ Starship
     Wiring Loom,3
 
   Conflict Scanner
-    _Nanites,150
     ^,Teleport Receiver
+    _Nanites,150
     Walker Brain,1
     Wiring Loom,1
 
   Economy Scanner
-    _Nanites,150
     ^,Teleport Receiver
+    _Nanites,150
     Microprocessor,5
     Wiring Loom,1
+
+  Cargo Scan Deflector
+    ^,Economy Scanner
+    _Nanites,240
+    Counterfeit Circuits,2
+    Solar Mirror,2
+    Platinum,220
 
   Pulse Engine
     Hermetic Seal,1
@@ -1404,8 +1413,8 @@ Starship
     Wiring Loom,1
 
   Fourier De-Limiter
-    _Nanites,120
     ^,Phase Beam
+    _Nanites,120
     Solar Mirror,1
     Wiring Loom,2
 
@@ -1486,6 +1495,18 @@ Multitool
     Wiring Loom,2
 
   Personal Forcefield
+    Ion Battery,2
+    Wiring Loom,1
+
+  Cloaking Device
+    _Nanites,80
+    Solar Mirror,2
+    Ion Battery,3
+    Wiring Loom,1
+
+  Voltaic Amplifier
+    _Nanites,180
+    Basalt,70
     Ion Battery,2
     Wiring Loom,1
 
