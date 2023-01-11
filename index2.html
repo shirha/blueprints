@@ -263,6 +263,7 @@ function delta(aL, aR, status){
   }
   return 0;
 }
+/* delta2([],JSON.parse(document.getElementById("CrashedShip").dataset.col),'=') */
 function delta2(aL, aR, status){
   function fact(n){return 40/18 + (status == "=" ? n : 0)}
   function summ(array){return array.reduce((a, b) => a + fact(b, status), 0)}
