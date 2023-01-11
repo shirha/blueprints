@@ -132,9 +132,17 @@ document.getElementById("info").innerHTML = screen.width;
 // storing an item in slot7 called "Polestar" not allowed
 let slot7 = localStorage.getItem("slot7");
 if(slot7){
-  let polestar = JSON.parse(slot7);
-  if(polestar[0] == "Polestar"){
+  let [polestar] = JSON.parse(slot7);
+  if(polestar == "Polestar"){
     localStorage.removeItem("slot7"); 
+  }
+}
+// refresh "All Ones"
+let slot8 = localStorage.getItem("slot8");
+if(slot8){
+  let [polestar] = JSON.parse(slot8);
+  if(polestar == "All Ones"){
+    localStorage.removeItem("slot8"); 
   }
 }
 /* create a default 'All Ones' in localstorage[slot8] */
