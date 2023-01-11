@@ -39,19 +39,19 @@
     }
     #clr:active {background: rgba(200, 0, 0, 0.75);}
 
-                                      * {font-size:  16px; font-family: Arial;}
-    @media (max-device-width:480px) { * {
-      font-size:  12px; font-family: Arial;}
+      * {font-size:  16px; font-family: Arial;}
+    @media (max-device-width:480px) { 
+      /* * {font-size:  12px; font-family: Arial;} */
       .d, .u, .m, select, option, input, #anal {font-size: 18px; font-weight: 600; margin-right: 3px; height: 50px;}
       .m:not(#times) {width: 36px;}
     }
-    @media (max-device-width:420px) { * {
-      font-size:  10px; font-family: Arial;} 
+    @media (max-device-width:420px) { 
+      /* * {font-size:  10px; font-family: Arial;} */
       .d, .u, .m, select, option, input, #anal {font-size: 18px; font-weight: 600; margin-right: 3px; height: 50px;}
-      .m:not(#times) {width: 32px;}
+      .m:not(#times) {width: 30px;}
     }
-    @media (max-device-width:360px) { * {
-      font-size:   9px; font-family: Arial;} 
+    @media (max-device-width:360px) { 
+      /* * {font-size:   9px; font-family: Arial;} */
       .d, .u, .m, select, option, input, #anal {font-size: 16px; font-weight: 600; margin-right: 3px; height: 50px;}
       .m:not(#times) {width: 24px;}
     }
@@ -277,7 +277,6 @@ function changeDb(cat){
 
 /* evenly balance the buttons in the two .col divs */
 function flow(){
-  if(dblcol == "off") return;
   let cat = combo.options[combo.selectedIndex].text,
       status = document.getElementById("menu").innerHTML,
       tbl = document.getElementById(cat),
@@ -285,6 +284,10 @@ function flow(){
       arrR = JSON.parse(tbl.dataset.col),
       arrL = arrR.splice(0,doc[0].children.length);
       let direction = delta(arrL,arrR,status);
+  if(dblcol == "off"){
+    doc[1].style.display = "none";
+    return;
+  }
   while( direction ){
     if(direction > 0){
       doc[0].appendChild(doc[1].firstChild);
