@@ -330,13 +330,13 @@ function delta(aL, aR, status){
       return 0;
     }
   }
-  if(sumL == 0){
-    if(aR.length > 1){
-      return +1;
-    }else{
-      return 0;
-    }
-  }
+  // if(sumL == 0){
+  //   if(aR.length > 1){
+  //     return +1;
+  //   }else{
+  //     return 0;
+  //   }
+  // }
   if(sumL + .001 > sumR){
     if(delta1 > delta0 + .001) {
       return -1;
@@ -2733,7 +2733,7 @@ Agriculture
     NipNip Buds,1
     Faecium,20`
 .split(/\n/).forEach((e) => {
-  if(e && !e.match(/^\s*$/)){
+  if(e && !e.match(/^\s*$/) && !e.match(/\/\//)){
     if(e.match(/^\S/)){
       cat = e;
       addCombo(e);
@@ -2781,6 +2781,19 @@ function accum(e){
 
 function addCombo(textb) {
 function init(){
+
+> ipconfig
+Ethernet adapter Ethernet 2:
+
+   Connection-specific DNS Suffix  . : hsd1.ca.comcast.net. <============ look for comcast
+   IPv6 Address. . . . . . . . . . . : 2601:204:e000:4dd0::4
+   IPv6 Address. . . . . . . . . . . : 2601:204:e000:4dd0:952a:5e2b:5ac2:44a9
+   Temporary IPv6 Address. . . . . . : 2601:204:e000:4dd0:d033:1714:c047:e8b6
+   Link-local IPv6 Address . . . . . : fe80::952a:5e2b:5ac2:44a9%31
+   IPv4 Address. . . . . . . . . . . : 192.168.0.10 <==================== 192.168.0.10:9001/
+   Subnet Mask . . . . . . . . . . . : 255.255.255.0
+   Default Gateway . . . . . . . . . : fe80::d60a:a9ff:fea2:af2c%31
+                                       192.168.0.1
 */
 </script>
 </body>
