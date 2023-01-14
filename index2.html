@@ -65,7 +65,7 @@
 <button type="button" class="m" id="times">10<sup id="power">0</sup></button>
 <button type="button" class="m" id="ones" >1</button>
 <button type="button" class="m" id="zero" >0</button>
-<button type="button" class="m" id="onoff">●</button>
+<button type="button" class="m" id="onoff">●</button> <!-- ○ -->
 <button type="button" class="m" id="anal" >@</button>
 </div>
 <table id="Localstore">
@@ -199,7 +199,6 @@ function localstore(e){
     }
   }
 }
-
 /* hilite recently accessed localstore slot */
 function hilite(slot){
   let inp = document.querySelectorAll("#Localstore input");
@@ -207,7 +206,6 @@ function hilite(slot){
       inp[i].style.backgroundColor = inp[i].id == slot ? "rgba(220, 220, 220, 0.9)" : "rgba(240, 240, 240, 0.75)";
   }
 }
-
 /* set increment amount to 1, 10, 100, 1000 */
 function toggle_times(){
   let text = document.getElementById("power");
@@ -223,7 +221,6 @@ function toggle_menu(){
   }
   flow();
 }
-
 /* toggle whether to add or subtract increment amount */
 function toggle_plus(){
   let text = document.getElementById("plus");
@@ -270,7 +267,7 @@ function changeDb(cat){
     document.getElementById("info").style.display = "block";
   }else if(cat == "Components"){
     document.getElementById("menu" ).style.display = "inline-block";
-      displayCp();
+    displayCp();
     flow();
   }else if(cat != "Localstore"){
     document.getElementById("menu" ).style.display = "inline-block";
@@ -315,44 +312,18 @@ function delta(aL, aR, status){
     sumL   = aL.reduce((a, b) => a + factor(b, status), 0),
     sumR   = aR.reduce((a, b) => a + factor(b, status), 0),
     delta1 = Math.abs(sumR - sumL),
-    delta0 = null,
-    delta2 = null;
-  if(aL.length > 0)
-    delta0 = Math.abs(sumR - sumL + 2 * (factor(aL[aL.length-1], status)));
-  if(aR.length > 0)
-    delta2 = Math.abs(sumR - sumL - 2 * (factor(aR[0], status)));
+    delta0 = aL.length>0?Math.abs(sumR - sumL + 2*(factor(aL[aL.length-1], status))) : null,
+    delta2 = aR.length>0?Math.abs(sumR - sumL - 2*(factor(aR[0          ], status))) : null;
   console.log(`${status},(${aL.length})[${aL}]=${pad(sumL)}, (${aR.length})[${aR}]=${pad(sumR)}, ` +
-    `d0=${aL.length > 0?pad(delta0):delta0}, d1=${pad(delta1)}, d2=${aR.length > 0?pad(delta2):delta2}`);
-  if(sumR == 0){
-    if(aL.length > 1){
-      return -1;
-    }else{
-      return 0;
-    }
-  }
-  // if(sumL == 0){
-  //   if(aR.length > 1){
-  //     return +1;
-  //   }else{
-  //     return 0;
-  //   }
-  // }
-  if(sumL + .001 > sumR){
-    if(delta1 > delta0 + .001) {
-      return -1;
-    }
-  }
-  if(sumR + .001 > sumL){
-    if(delta1 + .001 > delta2) {
-      return +1;
-    }
-  }
+    `d0=${aL.length>0?pad(delta0):delta0}, d1=${pad(delta1)}, d2=${aR.length>0?pad(delta2):delta2}`);
+  if(sumL + .001 > sumR && delta1 > delta0 + .001) return -1;
+  if(sumR + .001 > sumL && delta1 + .001 > delta2) return +1;
   return 0;
 }
 /* delta2([],JSON.parse(document.getElementById("CrashedShip").dataset.col),'=') */
 function delta2(aL, aR, status){
-  function fact(n){return 40/18 + (status == "=" ? n : 0)}
-  function summ(array){return array.reduce((a, b) => a + fact(b, status), 0)}
+  function fact(n, status){return 40/18 + (status == "=" ? n : 0)}
+  function summ(array, status){return array.reduce((a, n) => a + fact(n, status), 0)}
   let delta = [];    
   while( true ){
     delta.push(Math.abs(summ(aR) - summ(aL)));
@@ -430,6 +401,7 @@ function displayCp(){
     element = document.createElement("button");
     element.setAttribute("class", "b c");
     createSpan(element, "r", "=", `${prop},${cp[prop].num} @${price[prop]}`);
+    if(isNaN(cp[prop].num) || isNaN(price[prop])) alert(prop)
     cost += cp[prop].num * price[prop];
     arrR.push(0);
     cp[prop].grp.forEach((text, i) =>{
@@ -530,6 +502,7 @@ Ammonia,62
 Antimatter,5233
 Antimatter Housing,6500
 Aronium,25000
+Basalt,62
 Cactus Flesh,28
 Cadmium,83
 Carbon,12
@@ -2794,7 +2767,39 @@ Ethernet adapter Ethernet 2:
    Subnet Mask . . . . . . . . . . . : 255.255.255.0
    Default Gateway . . . . . . . . . : fe80::d60a:a9ff:fea2:af2c%31
                                        192.168.0.1
-*/
+
+
+  // if(aL.length > 0)
+  //   delta0 = Math.abs(sumR - sumL + 2 * (factor(aL[aL.length-1], status)));
+  // if(aR.length > 0)
+  //   delta2 = Math.abs(sumR - sumL - 2 * (factor(aR[0], status)));
+
+  // if(sumR == 0){
+  //   if(aL.length > 1){
+  //     return -1;
+  //   }else{
+  //     return 0;
+  //   }
+  // }
+ // if(sumL == 0){
+  //   if(aR.length > 1){
+  //     return +1;
+  //   }else{
+  //     return 0;
+  //   }
+  // }
+  // if(sumL + .001 > sumR){
+  //   if(delta1 > delta0 + .001) {
+  //     return -1;
+  //   }
+  // }
+  // if(sumR + .001 > sumL){
+  //   if(delta1 + .001 > delta2) {
+  //     return +1;
+  //   }
+  // }
+  // if(sumR == 0 && aL.length > 1){return -1} // cost == 0
+ */
 </script>
 </body>
 </html>
