@@ -85,11 +85,10 @@
 <button id="clr">Click to clear “localStorage”</button>
 <div id="info" style="display:block;font-size:10px;width:30px;margin-top:10px;padding-left:5px;"></div>
 <script>
-let cp,
-  dblcol  = getQueryVariable('dblcol'),
+let cp, rpt, dblcol = getQueryVariable('dblcol'),
   db      = Object.create(null), 
   price   = Object.create(null), 
-  // include = Object.create(null), // used in displayCp() to exclude some categories
+  include = Object.create(null), // used in displayCp() to exclude some categories
   combo   = document.getElementById("combo");
 combo.addEventListener("change", changeDb);
 document.getElementById("anal").addEventListener("click", (e) => {
@@ -97,11 +96,12 @@ document.getElementById("anal").addEventListener("click", (e) => {
   document.getElementById("clr" ).style.display = "none";
   let doc = document.querySelectorAll(`#Components .col`),
     status = document.getElementById("menu").innerHTML;
-  doc[0].innerHTML = doc[1].innerHTML = "";
-  analyse("Stasis Device", status, doc[0]);
-  analyse("Fusion Ignitor", status, doc[1]);
+  doc[0].innerHTML = "";
+  doc[1].innerHTML = "";
+  analyse("Stasis Device",status,doc[0]);
+  analyse("Fusion Ignitor",status,doc[1]);
 });
-document.getElementById("clr").addEventListener("click", (e) => {
+document.getElementById("clr"  ).addEventListener("click", () => {
   let doc = document.querySelectorAll('input[id^=slot]');
   for (let i = 0; i < doc.length; i++) {
     localStorage.removeItem(`slot${i}`);
@@ -128,16 +128,16 @@ document.getElementById("info").innerHTML = screen.width;
 // storing an item in slot7 called "Polestar" not allowed
 let slot7 = localStorage.getItem("slot7");
 if(slot7){
-  let [desc] = JSON.parse(slot7);
-  if(desc == "Polestar"){
+  let [polestar] = JSON.parse(slot7);
+  if(polestar == "Polestar"){
     localStorage.removeItem("slot7"); 
   }
 }
 // refresh "All Ones"
 let slot8 = localStorage.getItem("slot8");
 if(slot8){
-  let [desc] = JSON.parse(slot8);
-  if(desc == "All Ones"){
+  let [polestar] = JSON.parse(slot8);
+  if(polestar == "All Ones"){
     localStorage.removeItem("slot8"); 
   }
 }
@@ -145,8 +145,8 @@ if(slot8){
 if(localStorage.getItem("slot8") === null) {
   let ones = JSON.parse(JSON.stringify(db));
   for(const cat in db){
-    for(const prop in db[cat][0]){
-      ones[cat][0][prop][0] = 1;
+    for(const prop in db[cat]){
+      ones[cat][prop].num = 1;
   } }
   localStorage.setItem('slot8', JSON.stringify(['All Ones', ones]));
 }
@@ -199,10 +199,14 @@ function localstore(e){
 function hilite(slot){
   let inp = document.querySelectorAll("#Localstore input");
   for (let i = 0; i < inp.length; i++) {
-      inp[i].style.backgroundColor = inp[i].id == slot ? "rgba(200, 200, 200, 0.9)" : "rgba(240, 240, 240, 0.75)";
+      inp[i].style.backgroundColor = inp[i].id == slot ? "rgba(220, 220, 220, 0.9)" : "rgba(240, 240, 240, 0.75)";
   }
 }
-
+/* set increment amount to 1, 10, 100, 1000 */
+function toggle_times(){
+  let text = document.getElementById("power");
+  text.innerHTML = (parseInt(text.innerHTML) + 1) % 4;
+}
 /* toggle blueprint between summary and detail */
 function toggle_menu(){
   let text = document.getElementById("menu"), attr;
@@ -218,49 +222,47 @@ function toggle_plus(){
   let text = document.getElementById("plus");
   text.innerHTML = text.innerHTML == "+" ? "-" : "+";
 }
-/* set increment amount to 1, 10, 100, 1000 */
-function toggle_times(){
-  let text = document.getElementById("power");
-  text.innerHTML = (parseInt(text.innerHTML) + 1) % 4;
-}
 /* set all amounts to 1 in current category */
 function toggle_ones(){
   cat = combo.value;
-  for(const prop in db[cat][0]){
-    db[cat][0][prop][0] = 1;
-    document.getElementById(prop).childNodes[0].innerHTML = `${prop},${db[cat][0][prop][0]}`;
+  // let cat = document.getElementById("combo").value;
+  for(const prop in db[cat]){
+    db[cat][prop].num = 1;
+    document.getElementById(prop).childNodes[0].innerHTML = `${prop},${db[cat][prop].num}`;
   }
 }
 /* set all amounts to 0 in current category */
 function toggle_zero(){
   cat = combo.value;
-  for(const prop in db[cat][0]){
-    db[cat][0][prop][0] = 0;
-    document.getElementById(prop).childNodes[0].innerHTML = `${prop},${db[cat][0][prop][0]}`;
+  // let cat = document.getElementById("combo").value;
+  for(const prop in db[cat]){
+    db[cat][prop].num = 0;
+    document.getElementById(prop).childNodes[0].innerHTML = `${prop},${db[cat][prop].num}`;
   }
 }
 /* toggle whether this category is included in components view */
 function toggle_onoff(){
   let text = document.getElementById("onoff"),
     cat = combo.value;
-  db[cat][2] = text.innerHTML = text.innerHTML == "○" ? "●"  : "○";
+    // cat = document.getElementById("combo").value;
+  include[cat] = text.innerHTML = text.innerHTML == "○" ? "●"  : "○";
+  // db[cat].onoff = text.innerHTML = text.innerHTML == "○" ? "●"  : "○";
 }
-
 /* change category to display */
 function changeDb(e){
   let cat = combo.value;
   console.log(`cat=${cat}`);
-  let element = document.querySelectorAll("table");
-  for (let i = 0; i < element.length; i++) {
-    element[i].style.display = 'none';
-  }
-  element = document.querySelectorAll(".m"); // menu buttons
-  for (let i = 0; i < element.length; i++) {
-    element[i].style.display = 'none';
+  let doc = document.querySelectorAll("table");
+  for (let i = 0; i < doc.length; i++) {
+    doc[i].style.display = 'none';
   }
   document.getElementById("info").style.display = "none";
   document.getElementById("clr").style.display = "none";
   document.getElementById(cat).style.display = 'block';
+  doc = document.querySelectorAll(".m"); // menu buttons
+  for (let i = 0; i < doc.length; i++) {
+    doc[i].style.display = 'none';
+  }
 
   if(cat == "Localstore"){
     document.getElementById("info" ).style.display = "block";
@@ -268,6 +270,7 @@ function changeDb(e){
     document.getElementById("menu" ).style.display = "inline-block";
     displayCp();
     flow();
+  // }else if(cat != "Localstore"){
   }else{
     document.getElementById("menu" ).style.display = "inline-block";
     document.getElementById("plus" ).style.display = "inline-block";
@@ -275,20 +278,21 @@ function changeDb(e){
     document.getElementById("ones" ).style.display = "inline-block";
     document.getElementById("zero" ).style.display = "inline-block";
     document.getElementById("onoff").style.display = "inline-block";
-    document.getElementById("onoff").innerHTML = db[cat][2];
+    document.getElementById("onoff").innerHTML = include[cat];
     flow();
   }
 }
 
 /* evenly balance the buttons in the two .col divs */
 function flow(){
+  // let cat = combo.options[combo.selectedIndex].value,
   let cat = combo.value,
       status = document.getElementById("menu").innerHTML,
       tbl = document.getElementById(cat),
       doc = tbl.querySelectorAll(".col"),
-      arrR = JSON.parse(cat == "Components" ? cp[1] : db[cat][1]),
-      arrL = arrR.splice(0, doc[0].children.length),
-      direction = delta(arrL, arrR, status);
+      arrR = JSON.parse(tbl.dataset.col),
+      arrL = arrR.splice(0,doc[0].children.length);
+      let direction = delta(arrL,arrR,status);
   if(dblcol == "off"){
     doc[1].style.display = "none";
     return;
@@ -311,8 +315,8 @@ function delta(aL, aR, status){
     sumL   = aL.reduce((a, b) => a + factor(b, status), 0),
     sumR   = aR.reduce((a, b) => a + factor(b, status), 0),
     delta1 = Math.abs(sumR - sumL),
-    delta0 = aL.length>0 ? Math.abs(sumR - sumL + 2*(factor(aL[aL.length-1], status))) : null,
-    delta2 = aR.length>0 ? Math.abs(sumR - sumL - 2*(factor(aR[0          ], status))) : null;
+    delta0 = aL.length>0?Math.abs(sumR - sumL + 2*(factor(aL[aL.length-1], status))) : null,
+    delta2 = aR.length>0?Math.abs(sumR - sumL - 2*(factor(aR[0          ], status))) : null;
   console.log(`${status},(${aL.length})[${aL}]=${pad(sumL)}, (${aR.length})[${aR}]=${pad(sumR)}, ` +
     `d0=${aL.length>0?pad(delta0):delta0}, d1=${pad(delta1)}, d2=${aR.length>0?pad(delta2):delta2}`);
   if(sumL + .001 > sumR && delta1 > delta0 + .001) return -1;
@@ -330,7 +334,7 @@ function delta2(aL, aR, status){
     if(!aR.length) break;
   }
   let minIndex = delta.reduce((before, value, index, array) => value < array[before] ? index : before, 0);
-  console.log(minIndex, delta);
+  console.log(minIndex,delta);
 }
 
 /* populate all categories with blueprints */
@@ -338,7 +342,7 @@ function displayDb(){
   let status = document.getElementById("menu").innerHTML, element;
   for(const cat in db){
     let arrL = [], arrR = [];
-    let element = document.getElementById(cat);
+    element = document.getElementById(cat);
     if(element) element.remove();
     let tbl = document.createElement("table");
     tbl.setAttribute("id", cat);
@@ -347,65 +351,72 @@ function displayDb(){
     document.getElementById("container").appendChild(tbl);
     let doc = document.querySelectorAll(`#${cat} .col`);
 
-    for(const prop in db[cat][0]){
+    for(const prop in db[cat]){
       element = document.createElement("button");
       element.setAttribute("id", prop);
       element.setAttribute("class", "b");
-      createSpan(element, "r", "=", `${prop},${db[cat][0][prop][0]}`);
-      arrL.push(0);
-      db[cat][0][prop].forEach((e, i) => {
-        if(i > 0){ // skip counter entry
+      createSpan(element, "r", "=", `${prop},${db[cat][prop].num}`);
+      arrR.push(0);
+      db[cat][prop].comp.forEach((e, i) => {
+        // if(i > 0){ // skip counter entry
           createSpan(element, "i", status, e);
-          arrL[arrL.length-1] += 1;
-        }
+          arrR[arrR.length-1] += 1;
+        // }
       });
       doc[0].appendChild(element);
       //console.log(prop,element);
       document.getElementById(prop).addEventListener("click", accum);
     }
-    db[cat][1] = `[${arrL}]`;
-    console.log(cat, db[cat][1]);
+    tbl.setAttribute("data-col", `[${arrR}]`);
+    console.log(cat, tbl.dataset.col);
   }
 }
 /* calculate component view */
 function displayCp(){
-  cp = [Object.create(null), ''];
+  cp = Object.create(null);
   let doc = document.querySelectorAll(`#Components .col`),
     status = document.getElementById("menu").innerHTML,
     cost = 0, num, element, key, value, arrL = [], arrR = [];
 
-  doc[0].innerHTML = doc[1].innerHTML = "";
+  doc[0].innerHTML = "";
+  doc[1].innerHTML = "";
 
   for(const cat in db){
-   for(const prop in db[cat][0]){
-      db[cat][0][prop].forEach((e, i) => {
-        if(i == 0){ // save counter in num
-          num = e;
-        } else {
-          if(num > 0 && db[cat][2] == "●"){
+   for(const prop in db[cat]){
+      num = db[cat][prop].num;
+      db[cat][prop].comp.forEach((e, i) => {
+        // if(i == 0){ // save counter in num
+        //   num = e;
+        // } else {
+          if(num > 0 && include[cat] == "●"){
             [key, value] = e.split(/,/);
             if(key != "^"){ // not a dependency
-              if(!(key in cp[0])){
-                cp[0][key] = [0];
+              if(!(key in cp)){
+                cp[key] = Object.create(null);
+                cp[key].num = 0;
+                cp[key].grp = [];
               }
-              cp[0][key][0] += ( !prop.match(/^\(S\)/) && key.match(/^_/) ? 1 : num ) * value;
-              cp[0][key].push(`x${num} ${prop},${value}`);
-  } } } })} }
+              cp[key].num += ( !prop.match(/^\(S\)/) && key.match(/^_/) ? 1 : num ) * value;
+              cp[key].grp.push(`x${num} ${prop},${value}`);
+            } 
+          } 
+        // } 
+      }
+    )}
+  }
   console.log(cp);
 
-  Object.keys(cp[0]).sort().forEach((prop) => {
+  Object.keys(cp).sort().forEach((prop) => {
     element = document.createElement("button");
     element.setAttribute("class", "b c");
-    createSpan(element, "r", "=", `${prop},${cp[0][prop][0]} @${price[prop]}`);
-    if(isNaN(cp[0][prop][0]) || isNaN(price[prop])) alert(prop)
-    cost += cp[0][prop][0] * price[prop];
-    arrL.push(0);
-    cp[0][prop].slice(1)
-      .sort((a,b) => a.split(' ',1)[1] > b.split(' ',1)[1])
-      .forEach((text, i) => {
-        createSpan(element, "i", status, text);
-        arrL[arrL.length-1] += 1;
-      });
+    createSpan(element, "r", "=", `${prop},${cp[prop].num} @${price[prop]}`);
+    if(isNaN(cp[prop].num) || isNaN(price[prop])) alert(prop)
+    cost += cp[prop].num * price[prop];
+    arrR.push(0);
+    cp[prop].grp.sort().forEach((text, i) =>{
+      createSpan(element, "i", status, text);
+      arrR[arrR.length-1] += 1;
+    });
     doc[0].appendChild(element);
   });
 
@@ -414,23 +425,16 @@ function displayCp(){
   createSpan(element, "r", "=", `cost: ${cost} ${cost == 0 ? 
     '<span id="egg">Click “@” to see easter egg</span>' : ""}`);
   doc[0].appendChild(element);
-  arrL.push(0);
+  arrR.push(0);
 
-  cp[1] = `[${arrL}]`;
-  console.log("Components", cp[1]);
+  let tbl = document.getElementById("Components");
+  tbl.setAttribute("data-col", `[${arrR}]`);
+  console.log("Components", tbl.dataset.col);
 
   if(cost == 0){
     document.getElementById("anal").style.display = "inline-block";
     document.getElementById("clr" ).style.display = "inline-block";
   }
-}
-/* analyze valuable blueprints */
-function createSpan(element, c, status, text){
-  let span = document.createElement("span");
-  span.setAttribute("class", c);
-  span.style.display = status == "=" ? "block" : "none";
-  span.innerHTML = text;
-  element.appendChild(span);
 }
 /* analyze valuable blueprints */
 function analyse(recipe,status,doc){
@@ -450,22 +454,31 @@ function analyse(recipe,status,doc){
   });
   doc.appendChild(element);
 }
+
+function createSpan(element, c, status, text){
+  rpt += c == "r" ? `\n${text}\n` : `  ${text}\n`;
+  //console.log(c,status,text);
+  let span = document.createElement("span");
+  span.setAttribute("class", c);
+  span.style.display = status == "=" ? "block" : "none";
+  span.innerHTML = text;
+  element.appendChild(span);
+}
 /* accumulator used when a blueprint is clicked */
 function accum(e){
-  let text  = document.getElementById("plus").innerHTML,
-    power   = parseInt(document.getElementById("power").innerHTML),
+  let text = document.getElementById("plus").innerHTML,
+    power = parseInt(document.getElementById("power").innerHTML),
     element = e.target.nodeName == "SPAN" ? e.target.parentNode : e.target,
-    cat     = element.parentElement.parentElement.parentElement.parentElement.id,
-    prop    = element.id,
-    num     = db[cat][0][prop][0];
-    //console.log(num, power,10**power);
+    cat = element.parentElement.parentElement.parentElement.parentElement.id,
+    num = db[cat][element.id].num;
+    // console.log(num, power,10**power);
   if(text == "+"){
-      db[cat][0][prop][0] = Math.min(db[cat][0][prop][0] + 10 ** power, 10000);
+      db[cat][element.id].num = Math.min(db[cat][element.id].num + 10 ** power, 10000);
   } else {
-      db[cat][0][prop][0] = Math.max(db[cat][0][prop][0] - 10 ** power, 0);
+      db[cat][element.id].num = Math.max(db[cat][element.id].num - 10 ** power, 0);
   }
-  element.childNodes[0].innerHTML = `${prop},${db[cat][0][prop][0]}`;
-  // console.log(cat,prop,db[cat][prop]);
+  element.childNodes[0].innerHTML = `${element.id},${db[cat][element.id].num}`;
+  // console.log(cat,element.id,db[cat][element.id]);
 }
 
 /* https://shirha.github.io/blueprints/?dblcol=off */
@@ -480,14 +493,17 @@ function getQueryVariable(variable){
 }
 
 /* used by init() to populate select options */
-function addCombo(cat) {
+function addCombo(text) {
+  // var combo = document.getElementById("combo"),
   let option = document.createElement("option");
-  option.text = option.value = cat;
+  option.text = option.value = text;
+  // option.text = textb;
   combo.add(option, null);
+  include[text] = "●";
 }
 /* initialise 'price' and 'db' with bluprints */
 function init(){
-  let cat, prop, key, value;
+  let cat, key, value;
 `Acid,188000
 Activated Copper,75
 Amino Chamber,12300
@@ -2701,14 +2717,18 @@ Agriculture
 .split(/\n/).forEach((e) => {
   if(e && !e.match(/^\s*$/) && !e.match(/\/\//)){
     if(e.match(/^\S/)){
-      cat = e.trim();
-      db[cat] = [Object.create(null),'','●'];
-      addCombo(cat);
+      cat = e;
+      addCombo(e);
     }else if(e.match(/^ {4}/)){
-      db[cat][0][prop].push(e.trim());
+      db[cat][key]['comp'].push(e.trim());
     }else{
-      prop = e.trim();
-      db[cat][0][prop] = [0]; // accumulator 1st item in array
+      key = e.trim()
+      if(!(cat in db)){
+        db[cat] = Object.create(null);
+      }
+      db[cat][key] = Object.create(null);
+      db[cat][key]['comp'] = [];
+      db[cat][key]['num' ] = 0; // accumulator 1st item in array
     }
   }
 });
