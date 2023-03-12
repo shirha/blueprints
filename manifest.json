@@ -12,7 +12,7 @@
       "sizes": "512x512"
     }
   ],
-  "start_url": "/blueprints/index.html",
+  "start_url": "/blueprints/?app=blueprints",
   "background_color": "#ea413a",
   "display": "standalone",
   "scope": "/",
